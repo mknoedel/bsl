@@ -1,17 +1,28 @@
 import * as React from 'react'
-import Link from 'next/link'
-import Layout from '../components/Layout'
 import { NextPage } from 'next'
+import Layout from '../components/Layout'
+import { Hidden, Box } from '@material-ui/core'
+import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper'
+import tabs from '../utils/tabs'
 
 const IndexPage: NextPage = () => {
   return (
-    <Layout title="Home | Next.js + TypeScript Example">
-      <h1>Hello Next.js 👋</h1>
-      <p>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </p>
+    <Layout title='Home'>
+      <HorizontalNonLinearAlternativeLabelStepper tabs={tabs}>
+        <Box 
+          display="flex" 
+          width={'100%'}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Hidden smDown>
+            <img src='BSL circle logo.png' height="500px" style={{margin: '50px'}}/>
+          </Hidden>
+            <Hidden mdUp>
+              <img src='BSL circle logo.png' width='100%' style={{margin: '50px'}}/>
+          </Hidden>
+        </Box>
+      </HorizontalNonLinearAlternativeLabelStepper>
     </Layout>
   )
 }
