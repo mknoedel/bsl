@@ -1,18 +1,35 @@
 {
   "name": "with-typescript",
+  "description": "npm run build && firebase emulators:start",
   "version": "1.0.0",
+  "engines": {
+    "node": "10"
+  },
+  "main": "dist/server/index.js",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "export": "next export",
-    "start": "next start",
-    "type-check": "tsc"
+    "dev:client": "next src/client",
+    "dev:server": "babel src/server --out-dir dist/server --source-maps --watch",
+    "dev": "npm run dev:client & npm run dev:server",
+    "build:client": "next build src/client",
+    "build:server": "babel src/server --out-dir dist/server --source-maps",
+    "build": "npm run build:client && npm run build:server",
+    "start": "next start src/client/",
+    "firebase-login": "firebase login",
+    "preserve": "npm run build",
+    "serve": "cross-env NODE_ENV=production firebase emulators:start",
+    "shell": "npm run build && firebase functions:shell",
+    "deploy": "firebase deploy --only functions,hosting",
+    "logs": "firebase functions:log",
+    "type-check": "tsc",
+    "export": "next export"
   },
   "dependencies": {
     "@material-ui/core": "^4.9.1",
     "@react-pdf/renderer": "^1.6.8",
     "@types/lodash": "^4.14.149",
     "clsx": "^1.0.4",
+    "firebase-admin": "^8.12.1",
+    "firebase-functions": "^3.7.0",
     "highcharts": "^8.0.0",
     "highcharts-react-official": "^3.0.0",
     "isomorphic-unfetch": "3.0.0",
@@ -24,9 +41,16 @@
     "swr": "^0.1.16"
   },
   "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
     "@types/node": "^12.12.21",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
+    "cross-env": "^7.0.2",
+    "firebase-functions-test": "^0.2.1",
+    "firebase-tools": "^8.4.2",
+    "rimraf": "^3.0.2",
     "typescript": "3.7.3"
   },
   "license": "ISC"
