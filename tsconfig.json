@@ -19,5 +19,10 @@
     "target": "esnext"
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "utils/auth/initFirebase.ts",
+    "utils/auth/user.ts"
+  ]
 }
