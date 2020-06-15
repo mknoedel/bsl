@@ -1,7 +1,7 @@
-import "../css/main.css";
-import React from "react";
-import Header from "../components/FakeHeader";
-import Footer from "../components/FakeFooter";
+// import "../css/main.css";
+import React from "react"
+import Header from "../components/FakeHeader"
+import Footer from "../components/FakeFooter"
 
 const Terms = () => {
   return (
@@ -10,7 +10,7 @@ const Terms = () => {
       <p>terms of service</p>
       <Footer />
     </>
-  );
-};
+  )
+}
 
 export default Terms;

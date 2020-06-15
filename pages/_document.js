@@ -1,6 +1,8 @@
 import React from 'react';
-import Document, { HTML, Head, Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/core/styles';
+import PropTypes from 'prop-types'
+import { get } from 'lodash/object'
 import theme from '../utils/theme';
 
 export default class MyDocument extends Document {

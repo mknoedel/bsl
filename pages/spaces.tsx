@@ -1,31 +1,31 @@
-import "../css/main.css";
-import React, { useEffect } from "react";
-import firebase from "firebase/app";
-import "firebase/firestore";
-import PropTypes from "prop-types";
-import { get } from "lodash";
-import Link from "next/link";
-import Router from "next/router";
-import withAuthUser from "../utils/pageWrappers/withAuthUser";
-import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo";
-import initFirebase from "../utils/auth/initFirebase";
-import usePagination from "firestore-pagination-hook";
-import Header from "../components/FakeHeader";
-import Footer from "../components/FakeFooter";
+// import "../css/main.css";
+import React, { useEffect } from "react"
+import firebase from "firebase/app"
+import "firebase/firestore"
+import PropTypes from "prop-types"
+import { get } from "lodash"
+import Link from "next/link"
+import Router from "next/router"
+import withAuthUser from "../utils/pageWrappers/withAuthUser"
+import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo"
+import initFirebase from "../utils/auth/initFirebase"
+import usePagination from "firestore-pagination-hook"
+import Header from "../components/FakeHeader"
+import Footer from "../components/FakeFooter"
 
 initFirebase();
 
 const Spaces = (props: any) => {
   const { AuthUserInfo } = props;
-  const authUser = get(AuthUserInfo, "AuthUser");
+  const authUser = get(AuthUserInfo, "AuthUser")
 
   useEffect(() => {
     if (!authUser) {
-      Router.push("/");
+      Router.push("/")
     }
   });
 
-  const db = firebase.firestore();
+  const db = firebase.firestore()
   const {
     loading,
     loadingError,
@@ -36,7 +36,7 @@ const Spaces = (props: any) => {
     loadMore
   } = usePagination(
     db
-      .collection("spaces")
+      .collection("Spaces")
       .where("uid", "==", authUser?.id || "")
       .orderBy("spaceId", "asc"),
     {
@@ -57,8 +57,8 @@ const Spaces = (props: any) => {
           </Link>
           <div>
             {loading && <div>...</div>}
-            {items.map((item: any) => (
-              <pre className="text-xs">{JSON.stringify(item.data() || {}, null, 2)}</pre>
+            {items.map((item: any, idx: number) => (
+              <pre className="text-xs" key={idx}>{JSON.stringify(item.data() || {}, null, 2)}</pre>
             ))}
             {hasMore && !loadingMore && <button onClick={loadMore}>[ more ]</button>}
           </div>
@@ -84,4 +84,4 @@ Spaces.defaultProps = {
   AuthUserInfo: null
 };
 
-export default withAuthUser(withAuthUserInfo(Spaces));
+export default withAuthUser(withAuthUserInfo(Spaces))

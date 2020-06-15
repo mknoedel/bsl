@@ -1,4 +1,3 @@
-import "../../css/main.css";
 import React, { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
 import PropTypes from "prop-types";
@@ -44,7 +43,7 @@ const SpacesCreate = (props: any) => {
         throw `space ID can only contain letters, numbers and hyphens`;
       }
       const db = firebase.firestore();
-      const ref = db.collection("spaces").doc(inputs.spaceId);
+      const ref = db.collection("Spaces").doc(inputs.spaceId);
       const snap = await ref.get();
       if (snap.exists) {
         throw `a space with that ID already exists`;

@@ -1,8 +1,9 @@
 import commonMiddleware from "../../utils/middleware/commonMiddleware";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 
 // req type: CookieSession?
 const handler = (req: any, res: NextApiResponse) => {
+  console.log('logging out')
   // Destroy the session.
   // https://github.com/expressjs/cookie-session#destroying-a-session
   req.session = null;

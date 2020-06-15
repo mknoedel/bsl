@@ -9,6 +9,8 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 import Footer from '../components/FakeFooter'
 import Header from '../components/FakeHeader'
+import withAuthUser from '../utils/pageWrappers/withAuthUser'
+import withAuthUserInfo from '../utils/pageWrappers/withAuthUserInfo'
 
 const IndexPage: NextPage = (props: any) => {
   const { AuthUserInfo } = props
@@ -87,4 +89,4 @@ IndexPage.defaultProps = {
   AuthUserInfo: null
 };
 
-export default IndexPage
+export default withAuthUser(withAuthUserInfo(IndexPage))

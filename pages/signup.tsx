@@ -1,18 +1,17 @@
-import "../css/main.css";
-import React, { useState, useEffect } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
-import Link from "next/link";
-import Router from "next/router";
-import initFirebase from "../utils/auth/initFirebase";
-import Footer from "../components/FakeFooter";
+import React, { useState, useEffect } from "react"
+import firebase from "firebase/app"
+import "firebase/auth"
+import Link from "next/link"
+import Router from "next/router"
+import initFirebase from "../utils/auth/initFirebase"
+import Footer from "../components/FakeFooter"
 
 initFirebase();
 
 type Inputs = {
-  email: string;
-  password: string;
-  displayName: string;
+  email: string
+  password: string
+  displayName: string
 };
 
 function Signup() {
@@ -21,15 +20,15 @@ function Signup() {
     password: "",
     displayName: ""
   };
-  var firstInput: HTMLInputElement | null = null;
+  var firstInput: HTMLInputElement | null = null
 
-  const [inputs, setInputs] = useState(initialValues);
+  const [inputs, setInputs] = useState(initialValues)
 
   const handleSubmit = async (e: React.ChangeEvent<any>) => {
     e.preventDefault();
     try {
-      await firebase.auth().createUserWithEmailAndPassword(inputs.email, inputs.password);
-      var user = firebase.auth().currentUser;
+      await firebase.auth().createUserWithEmailAndPassword(inputs.email, inputs.password)
+      var user = firebase.auth().currentUser
       if (user) {
         await user.updateProfile({
           displayName: inputs.displayName

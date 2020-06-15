@@ -1,9 +1,11 @@
 import commonMiddleware from "../../utils/middleware/commonMiddleware";
+import logout from "../../utils/auth/logout";
 import { verifyIdToken } from "../../utils/auth/firebaseAdmin";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 
 // req type: CookieSession?
 const handler = async (req: any, res: NextApiResponse) => {
+  console.log('logging in')
   if (!req.body) {
     return res.status(400);
   }
@@ -24,10 +26,13 @@ const handler = async (req: any, res: NextApiResponse) => {
   // requests in a serverless context.
   try {
     const decodedToken = await verifyIdToken(token);
+    console.log('decodedToken')
+    console.log(decodedToken)
     req.session.decodedToken = decodedToken;
     req.session.token = token;
     return res.status(200).json({ status: true, decodedToken });
   } catch (error) {
+    await logout()
     return res.status(500).json({ error });
   }
 };

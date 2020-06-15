@@ -1,5 +1,4 @@
-import "../../css/main.css";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { get } from "lodash";

@@ -1,11 +1,11 @@
-import "../css/main.css";
+// import "../css/main.css";
 import React, { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import Link from "next/link";
 import Router from "next/router";
 import initFirebase from "../utils/auth/initFirebase";
-import Footer from "../components/footer";
+import Footer from "../components/FakeFooter";
 
 initFirebase();
 
