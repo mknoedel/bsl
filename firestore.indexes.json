@@ -1,4 +1,12 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionId": "Spaces",
+      "fields": [
+        { "fieldPath": "uid", "mode": "ASCENDING" },
+        { "fieldPath": "spaceId", "mode": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

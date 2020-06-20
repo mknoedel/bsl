@@ -21,3 +21,12 @@ export type ITab = {
   optional?: boolean
   form?: IForm
 }
+
+// xa is the access token, which can be retrieved through
+// firebase.auth().currentUser.getIdToken()
+export type UserData = {
+  id: string,
+  email: string,
+  token: string,
+  displayName: string
+}

@@ -17,5 +17,6 @@ admin.initializeApp({
 });
 
 export const getEnvironment = functions.https.onCall(async (data, context) => {
+  console.log(data, context)
   return { environment: environment };
 });
