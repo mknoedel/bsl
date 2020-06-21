@@ -21,3 +21,10 @@ export type ITab = {
   optional?: boolean
   form?: IForm
 }
+
+export type UserData = {
+  id: string,
+  email: string,
+  token: string,
+  displayName: string
+}

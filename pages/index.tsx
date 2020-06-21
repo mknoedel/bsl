@@ -4,17 +4,23 @@ import Layout from '../components/Layout'
 import { Hidden, Box } from '@material-ui/core'
 import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper'
 import tabs from '../utils/tabs'
-import { get } from "lodash"
-import PropTypes from "prop-types"
 import Link from "next/link"
-import Footer from '../components/FakeFooter'
-import Header from '../components/FakeHeader'
-import withAuthUser from '../utils/pageWrappers/withAuthUser'
-import withAuthUserInfo from '../utils/pageWrappers/withAuthUserInfo'
+import { useUser } from '../utils/auth/userUser'
+import useSWR from 'swr'
 
-const IndexPage: NextPage = (props: any) => {
-  const { AuthUserInfo } = props
-  const authUser = get(AuthUserInfo, "AuthUser")
+const fetcher = (url: string, token: string) =>
+  fetch(url, {
+    method: 'GET',
+    headers: new Headers({ 'Content-Type': 'application/json', token }),
+    credentials: 'same-origin',
+  }).then((res) => res.json())
+
+const IndexPage: NextPage = () => {
+  const { user, logout } = useUser()
+  const { data, error } = useSWR(
+    user ? ['/api/getFood', user.token] : null,
+    fetcher
+  )
 
   return (
     <Layout title='Home'>
@@ -34,59 +40,47 @@ const IndexPage: NextPage = (props: any) => {
         </Box>
       </HorizontalNonLinearAlternativeLabelStepper>
 
-    <>
-      <Header />
-      {!authUser ? (
-        <>
-          <div>not signed in.</div>
-          <div>
-            <Link href={"/login"}>
-              <a>[ log in ]</a>
-            </Link>
-          </div>
+      {!user?.id ? (
+          <>
+          <p>Hi there!</p>
           <p>
-            <Link href={"/signup"}>
-              <a>[ create account ]</a>
+            You are not signed in.{' '}
+            <Link href={'/auth'}>
+              <a>Sign in</a>
             </Link>
           </p>
         </>
       ) : (
-        <>
-          <pre className="text-xs">{JSON.stringify(authUser, null, 2)}</pre>
-          <p>
-            <Link href={"/account"}>
-              <a>[ account ]</a>
+        <div>
+          <div>
+            <p>You're signed in. Email: {user.email}</p>
+            <p>Display Name: {user.displayName}</p>
+            <p
+              style={{
+                display: 'inlinelock',
+                color: 'blue',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+              }}
+              onClick={() => logout()}
+            >
+              Log out
+            </p>
+          </div>
+          <div>
+            <Link href={'/spaces'}>
+              <a>[ Spaces ]</a>
             </Link>
-          </p>
-          <p>
-            <Link href={"/spaces"}>
-              <a>[ spaces ]</a>
+            <Link href={'/account'}>
+              <a>[ Account Management ]</a>
             </Link>
-          </p>
-        </>
+          </div>
+          {error && <div>Failed to fetch food!</div>}
+          {data && <div>Your favorite food is {data.food}.</div>}
+        </div>
       )}
-      <>
-        <Footer />
-      </>
-    </>
-
     </Layout>
   )
 }
 
-IndexPage.propTypes = {
-  AuthUserInfo: PropTypes.shape({
-    AuthUser: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      emailVerified: PropTypes.bool.isRequired
-    }),
-    token: PropTypes.string
-  })
-};
-
-IndexPage.defaultProps = {
-  AuthUserInfo: null
-};
-
-export default withAuthUser(withAuthUserInfo(IndexPage))
+export default IndexPage

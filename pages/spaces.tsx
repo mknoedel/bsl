@@ -1,56 +1,37 @@
-// import "../css/main.css";
-import React, { useEffect } from "react"
+import React from "react"
 import firebase from "firebase/app"
 import "firebase/firestore"
-import PropTypes from "prop-types"
-import { get } from "lodash"
 import Link from "next/link"
-import Router from "next/router"
-import withAuthUser from "../utils/pageWrappers/withAuthUser"
-import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo"
 import initFirebase from "../utils/auth/initFirebase"
-import usePagination from "firestore-pagination-hook"
-import Header from "../components/FakeHeader"
-import Footer from "../components/FakeFooter"
+import usePagination from "firestore-pagination-hook" //TODO: Use useSWR instead of this hook
+import { useUser } from "../utils/auth/userUser"
 
 initFirebase();
 
-const Spaces = (props: any) => {
-  const { AuthUserInfo } = props;
-  const authUser = get(AuthUserInfo, "AuthUser")
-
-  useEffect(() => {
-    if (!authUser) {
-      Router.push("/")
-    }
-  });
-
+const Spaces = () => {
+  const { user } = useUser()
   const db = firebase.firestore()
   const {
-    loading,
-    loadingError,
     loadingMore,
-    loadingMoreError,
+    // loadingError,
+    // loadingMoreError,
+    loading,
     hasMore,
     items,
     loadMore
   } = usePagination(
-    db
-      .collection("Spaces")
-      .where("uid", "==", authUser?.id || "")
+    db.collection("Spaces")
+      .where("uid", "==", user?.id || "")
       .orderBy("spaceId", "asc"),
-    {
-      limit: 10
-    }
-  );
-
+    { limit: 10 }
+  )
+  
   return (
     <>
-      {!authUser ? (
+      {!user?.id ? (
         <></>
       ) : (
         <>
-          <Header />
           <label>spaces</label>{" "}
           <Link href={"/spaces/create"}>
             <a>[ create ]</a>
@@ -62,26 +43,10 @@ const Spaces = (props: any) => {
             ))}
             {hasMore && !loadingMore && <button onClick={loadMore}>[ more ]</button>}
           </div>
-          <Footer />
         </>
       )}
     </>
-  );
-};
+  )
+}
 
-Spaces.propTypes = {
-  AuthUserInfo: PropTypes.shape({
-    AuthUser: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      emailVerified: PropTypes.bool.isRequired
-    }),
-    token: PropTypes.string
-  })
-};
-
-Spaces.defaultProps = {
-  AuthUserInfo: null
-};
-
-export default withAuthUser(withAuthUserInfo(Spaces))
+export default Spaces

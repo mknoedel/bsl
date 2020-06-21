@@ -1,42 +1,30 @@
-import React, { useEffect } from "react";
+import React from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
-import { get } from "lodash";
 import Link from "next/link";
-import Router from "next/router";
-import withAuthUser from "../utils/pageWrappers/withAuthUser";
-import withAuthUserInfo from "../utils/pageWrappers/withAuthUserInfo";
 import initFirebase from "../utils/auth/initFirebase";
-import logout from "../utils/auth/logout";
-import Header from "../components/FakeHeader";
-import Footer from "../components/FakeFooter";
+import Router from "next/router";
+import { useUser } from "../utils/auth/userUser";
 
 initFirebase();
 
 const Account = (props: any) => {
-  const { AuthUserInfo, environment } = props;
-  var authUser = get(AuthUserInfo, "AuthUser");
-
-  useEffect(() => {
-    if (!authUser) {
-      Router.push("/");
-    }
-  });
+  const { user, logout } = useUser()
+  const { environment } = props;
 
   return (
     <>
-      {!authUser ? (
+      {!user?.id ? (
         <></>
       ) : (
         <>
-          <Header />
           <div>
             <label htmlFor="displayName">display name</label>{" "}
             <Link href="/account/update-name">
               <a>[ update ]</a>
             </Link>
-            <p>{authUser.displayName}</p>
+            <p>{user.displayName}</p>
           </div>
           <p>{`env: ${environment}`}</p>
           <p>
@@ -44,7 +32,7 @@ const Account = (props: any) => {
               onClick={async () => {
                 try {
                   await logout();
-                  Router.push("/login");
+                  Router.push("/auth");
                 } catch (e) {
                   console.error(e);
                 }
@@ -53,7 +41,6 @@ const Account = (props: any) => {
               [ log out ]
             </button>
           </p>
-          <Footer />
         </>
       )}
     </>
@@ -68,4 +55,4 @@ Account.getInitialProps = async function() {
   };
 };
 
-export default withAuthUser(withAuthUserInfo(Account));
+export default Account;

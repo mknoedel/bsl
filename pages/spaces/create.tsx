@@ -1,14 +1,9 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import firebase from "firebase/app";
-import PropTypes from "prop-types";
-import { get } from "lodash";
 import Link from "next/link";
 import Router from "next/router";
-import withAuthUser from "../../utils/pageWrappers/withAuthUser";
-import withAuthUserInfo from "../../utils/pageWrappers/withAuthUserInfo";
 import initFirebase from "../../utils/auth/initFirebase";
-import Header from "../../components/FakeHeader";
-import Footer from "../../components/FakeFooter";
+import { useUser } from "../../utils/auth/userUser";
 
 
 initFirebase();
@@ -18,9 +13,8 @@ type Inputs = {
   title: string;
 };
 
-const SpacesCreate = (props: any) => {
-  const { AuthUserInfo } = props;
-  const authUser = get(AuthUserInfo, "AuthUser");
+const SpacesCreate = () => {
+  const { user } = useUser()
   var firstInput: HTMLInputElement | null = null;
 
   const initial: Inputs = {
@@ -51,7 +45,7 @@ const SpacesCreate = (props: any) => {
       await ref.set({
         spaceId: inputs.spaceId,
         title: inputs.title,
-        uid: authUser.id
+        uid: user?.id
       });
       Router.push("/spaces");
     } catch (error) {
@@ -68,20 +62,15 @@ const SpacesCreate = (props: any) => {
   };
 
   useEffect(() => {
-    if (!authUser) {
-      Router.push("/");
-    } else {
-      firstInput?.focus();
-    }
-  }, []); // [] = run once
+    firstInput?.focus()
+  }, [])
 
   return (
     <>
-      {!authUser ? (
+      {!user?.id ? (
         <></>
       ) : (
         <div>
-          <Header />
           <div>create a new space</div>
           <form onSubmit={handleSubmit}>
             <p>
@@ -114,30 +103,10 @@ const SpacesCreate = (props: any) => {
               <a>[ back to spaces ]</a>
             </Link>
           </p>
-          <Footer />
         </div>
       )}
     </>
   );
 };
 
-SpacesCreate.propTypes = {
-  AuthUserInfo: PropTypes.shape({
-    AuthUser: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      emailVerified: PropTypes.bool.isRequired
-    }),
-    token: PropTypes.string
-  })
-};
-
-SpacesCreate.defaultProps = {
-  AuthUserInfo: null
-};
-
-// Use `withAuthUser` to get the authed user server-side, which
-// disables static rendering.
-// Use `withAuthUserInfo` to include the authed user as a prop
-// to your component.
-export default withAuthUser(withAuthUserInfo(SpacesCreate));
+export default SpacesCreate

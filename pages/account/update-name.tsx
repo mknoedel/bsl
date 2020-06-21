@@ -1,30 +1,25 @@
 import React, { useEffect } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { get } from "lodash";
 import Link from "next/link";
 import Router from "next/router";
-import withAuthUser from "../../utils/pageWrappers/withAuthUser";
-import withAuthUserInfo from "../../utils/pageWrappers/withAuthUserInfo";
 import initFirebase from "../../utils/auth/initFirebase";
-import Header from "../../components/FakeHeader";
-import Footer from "../../components/FakeFooter";
+import { useUser } from "../../utils/auth/userUser";
 
 initFirebase();
 
-const AccountUpdateName = (props: any) => {
-  const { AuthUserInfo } = props;
-  var authUser = get(AuthUserInfo, "AuthUser");
+const AccountUpdateName = () => {
+  const { user, updateUser } = useUser()
   var input: HTMLInputElement | null = null;
 
   const handleDisplayNameSubmit = async () => {
     try {
-      var user = firebase.auth().currentUser;
-      if (user) {
-        await user.updateProfile({
+      var curUser = firebase.auth().currentUser;
+      if (curUser) {
+        await curUser.updateProfile({
           displayName: input?.value || ""
         });
-        authUser = user;
+        updateUser({displayName: curUser?.displayName || ""})
       }
       Router.push("/account");
     } catch (error) {
@@ -33,22 +28,21 @@ const AccountUpdateName = (props: any) => {
   };
 
   useEffect(() => {
-    if (!authUser) {
+    if (!user) {
       Router.push("/");
     }
     if (input) {
-      input.value = authUser?.displayName || "";
+      input.value = user?.displayName || "";
       input.focus();
     }
   });
 
   return (
     <>
-      {!authUser ? (
+      {!user?.id ? (
         <></>
       ) : (
         <>
-          <Header />
           <p>
             <label htmlFor="displayName">display name: </label>
             <input
@@ -67,11 +61,10 @@ const AccountUpdateName = (props: any) => {
               <a>[ back to account ]</a>
             </Link>
           </p>
-          <Footer />
         </>
       )}
     </>
   );
 };
 
-export default withAuthUser(withAuthUserInfo(AccountUpdateName));
+export default AccountUpdateName
