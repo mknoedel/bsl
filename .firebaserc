@@ -1,6 +1,7 @@
 {
   "projects": {
     "production": "bsl-balance",
-    "staging": "bsl-balance-staging"
+    "staging": "bsl-balance-staging",
+    "default": "bsl-balance-staging"
   }
 }

@@ -6,17 +6,16 @@ let storageBucket: string = "";
 const environment = functions.config().app.environment;
 if (environment === "staging") {
   serviceAccount = require("../serviceAccount-staging.json");
-  storageBucket = "emails-show-8eb6f.appspot.com";
+  storageBucket = "bsl-balance-staging.appspot.com";
 } else if (environment === "production") {
   serviceAccount = require("../serviceAccount-production.json");
-  storageBucket = "emails-show-prod.appspot.com";
+  storageBucket = "bsl-balance.appspot.com";
 }
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   storageBucket: storageBucket
 });
 
-export const getEnvironment = functions.https.onCall(async (data, context) => {
-  console.log(data, context)
+export const getEnvironment = functions.https.onCall(async () => {
   return { environment: environment };
 });

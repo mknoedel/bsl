@@ -3,7 +3,7 @@ import firebase from "firebase/app"
 import "firebase/firestore"
 import Link from "next/link"
 import initFirebase from "../utils/auth/initFirebase"
-import usePagination from "firestore-pagination-hook"
+import usePagination from "firestore-pagination-hook" //TODO: Use useSWR instead of this hook
 import { useUser } from "../utils/auth/userUser"
 
 initFirebase();

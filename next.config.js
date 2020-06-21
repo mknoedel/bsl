@@ -1,9 +1,3 @@
-// const clientConfig = {
-//     development: 'http://localhost:3000',
-//     production: 'https://bsl-balance.now.sh'
-// }
-// process.env.baseUrl = process.env.NODE_ENV === 'production' ? clientConfig.production : clientConfig.development
-
 // https://github.com/zeit/next.js/issues/7320#issuecomment-491906055
 const withCSS = require("@zeit/next-css")
 
