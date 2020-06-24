@@ -5,7 +5,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import cookie from 'js-cookie'
 import initFirebase from '../utils/auth/initFirebase'
-import { UserData } from '../interfaces'
+import { User } from '../interfaces'
 
 // Init the Firebase app.
 initFirebase()
@@ -27,7 +27,7 @@ const firebaseAuthConfig: firebaseui.auth.Config = {
       // xa is the access token, which can be retrieved through
       // firebase.auth().currentUser.getIdToken()
       const { uid, email, xa , displayName} = user
-      const userData: UserData = {
+      const userData: User = {
         id: uid,
         email,
         displayName,

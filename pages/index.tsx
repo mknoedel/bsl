@@ -7,8 +7,11 @@ import tabs from '../utils/tabs'
 import Link from "next/link"
 import { useUser } from '../utils/auth/userUser'
 import useSWR from 'swr'
+import initFirebase from "../utils/auth/initFirebase"
 
-const fetcher = (url: string, token: string) =>
+initFirebase()
+
+const swrFetcher = (url: string, token: string) =>
   fetch(url, {
     method: 'GET',
     headers: new Headers({ 'Content-Type': 'application/json', token }),
@@ -19,7 +22,7 @@ const IndexPage: NextPage = () => {
   const { user, logout } = useUser()
   const { data, error } = useSWR(
     user ? ['/api/getFood', user.token] : null,
-    fetcher
+    swrFetcher
   )
 
   return (
@@ -82,5 +85,23 @@ const IndexPage: NextPage = () => {
     </Layout>
   )
 }
+
+// IndexPage.getInitialProps = async ({ req }: NextPageContext) => {
+  
+//   JSON.parse(cookie)
+//   const db = firebase.firestore();
+//   const ref = db.collection("Spaces").doc(id);
+//   let form = ref.get()
+//     .then(doc => {
+//       if (!doc.exists) {
+//         console.log('No such document!');
+//       } else {
+//         console.log('Document data:', doc.data());
+//       }
+//     })
+//     .catch(err => {
+//       console.log('Error getting document', err);
+//     })
+// }
 
 export default IndexPage

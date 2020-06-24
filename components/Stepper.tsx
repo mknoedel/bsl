@@ -9,6 +9,7 @@ import { ITab } from '../interfaces';
 import { useRouter } from 'next/router'
 import _ from 'lodash';
 import { Hidden, Box, Container } from '@material-ui/core';
+import getTabLink from '../utils/getTabLink';
 
 interface IButtonProps {
     optional?: any,
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 export default function HorizontalNonLinearAlternativeLabelStepper(props: Props) {
   const classes = useStyles();
   const router = useRouter()
-  let initialStep = _.findIndex(props.tabs, c => c.link === router.asPath)
+  let initialStep = _.findIndex(props.tabs, tab => getTabLink(tab.name) === router.asPath)
 
   const [activeStep, setActiveStep] = React.useState(initialStep);
   const [completed, setCompleted] = React.useState(new Array());
@@ -72,9 +73,9 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
   useEffect(() => {
     localStorage.setItem('activeStep', String(activeStep))
     let newTab = props.tabs[activeStep]
-    if (newTab?.link && (router.asPath !== newTab.link)) {
+    if (getTabLink(newTab?.name) && (router.asPath !== getTabLink(newTab.name))) {
       setLoading(true)
-      router.push(props.tabs[activeStep].link)
+      router.push(getTabLink(newTab.name) || "/")
     }
   }, [activeStep])
   useEffect(() => {
@@ -94,14 +95,14 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
     return props.tabs[step]?.name || 'unknown'
   }
 
-  const isStepOptional = (step: number) => {
-    return props.tabs[step]?.optional || true
-  };
+  // const isStepOptional = (step: number) => {
+  //   return props.tabs[step]?.optional || true
+  // };
 
   const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      throw new Error("You can't skip a step that isn't optional.");
-    }
+    // if (!isStepOptional(activeStep)) {
+    //   throw new Error("You can't skip a step that isn't optional.");
+    // }
     setSkipped((prevSkipped: Array<unknown>) => {
       return _.union(prevSkipped, [activeStep]);
     });
@@ -145,7 +146,7 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   const handleStart = () => {
     setActiveStep(0)
-    router.push(props.tabs[0].link)
+    router.push(getTabLink(props.tabs[0].name) || "/")
   };
 
   const handleBack = () => {
@@ -218,14 +219,17 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
               <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                 Back
               </Button>
-              {isStepOptional(activeStep) && !completed.includes(activeStep) && (
-                <Button
-                  onClick={handleSkip}
-                  className={classes.button}
-                >
-                  Skip
-                </Button>
-              )}
+              {
+                // isStepOptional(activeStep) && 
+                !completed.includes(activeStep) && (
+                  <Button
+                    onClick={handleSkip}
+                    className={classes.button}
+                  >
+                    Skip
+                  </Button>
+                )
+              }
 
               {activeStep !== steps.length &&
                 (completed.includes(activeStep) ? (

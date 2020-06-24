@@ -1,12 +1,6 @@
 import * as admin from "firebase-admin";
 
 export const verifyIdToken = (token: string) => {
-  // let serviceAccount: any
-  // if (process.env.NODE_ENV === 'production') {
-  //   serviceAccount = require("../../functions/serviceAccount-production.json");
-  // } else {
-  //   serviceAccount = require("../../functions/serviceAccount-staging.json");
-  // }
 
   const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
@@ -26,7 +20,7 @@ export const verifyIdToken = (token: string) => {
     .auth()
     .verifyIdToken(token, true)
     .catch(error => {
-      console.log(error)
+      console.error(error)
       throw error;
     });
 };

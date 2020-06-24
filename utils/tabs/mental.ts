@@ -1,17 +1,17 @@
 import { IForm } from "../../interfaces"
 
 let mentalForm: IForm = [
-    {name: 'Are my practice sessions focused?'},
-    {name: 'Do I feel prepared for competition?'},
-    {name: 'Do I feel comfortable in competition?'},
-    {name: 'Do I feel confident during competition?'},
-    {name: 'Do I feel the expectations of others?', flip: true},
-    {name: 'Do I worry about what others think?', flip: true},
-    {name: 'Can I let myself compete without fear?'},
-    {name: 'Do I worry about parents/coach expectations?', flip: true},
-    {name: 'Do I play to "not make mistakes"?', flip: true},
-    {name: 'Do I play to hit great shots?'},
-    {name: 'Do I let myself enjoy my sport?'},
+    {question: 'Are my practice sessions focused?'},
+    {question: 'Do I feel prepared for competition?'},
+    {question: 'Do I feel comfortable in competition?'},
+    {question: 'Do I feel confident during competition?'},
+    {question: 'Do I feel the expectations of others?', flip: true},
+    {question: 'Do I worry about what others think?', flip: true},
+    {question: 'Can I let myself compete without fear?'},
+    {question: 'Do I worry about parents/coach expectations?', flip: true},
+    {question: 'Do I play to "not make mistakes"?', flip: true},
+    {question: 'Do I play to hit great shots?'},
+    {question: 'Do I let myself enjoy my sport?'},
   ]
   
 export default mentalForm

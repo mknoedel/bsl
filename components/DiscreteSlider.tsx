@@ -80,7 +80,7 @@ function valuetext(value: number): string {
 
 export default function DiscreteSlider({field, idx, setValue, onKeyPress, valueDisplay}: IDiscreteSliderProps) {
   const classes = useStyles()
-  let {name, value, flip} = field
+  let {question, value, flip} = field
   value = value || 0
 
   return (
@@ -90,7 +90,7 @@ export default function DiscreteSlider({field, idx, setValue, onKeyPress, valueD
         ThumbComponent={'span'}
         aria-labelledby="discrete-slider"
         valueLabelDisplay={valueDisplay ? "auto" : "off"}
-        id={name}
+        id={question}
         ref={(span: any) => {
           if (span?.children && onKeyPress) {
             span.children[span.children.length - 1].focus()

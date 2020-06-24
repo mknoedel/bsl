@@ -5,13 +5,13 @@ import { fetcher } from '../../utils/fetcher'
 import DiscreteSlider from '../../components/DiscreteSlider'
 import _ from 'lodash'
 import { Grid, Typography, makeStyles, Hidden, Container } from '@material-ui/core'
-import { ITab } from '../../interfaces'
+import { ITab, IForm } from '../../interfaces'
 import getRating from '../../utils/getRating'
-import { IncomingMessage } from 'http'
 import VerticalLinearStepper from '../../components/VertStepper'
 import HorizontalNonLinearAlternativeLabelStepper from '../../components/Stepper'
 import tabs from '../../utils/tabs'
 import TabGauge from '../../components/TabGauge'
+import { getApiUrl } from '../../utils/getApiUrl'
 
 
 type Props = {
@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TabDetail = ({tab, errors}: Props) => {
+  console.log(tab, errors)
 
   if (errors || !tab) {
     return (
@@ -49,7 +50,7 @@ const TabDetail = ({tab, errors}: Props) => {
   }
 
   const classes = useStyles()
-  const [form, setForm] = React.useState(tab.form);
+  const [form, setForm] = React.useState(tab.questions);
 
   React.useEffect(() => {
     let storedTab: string = localStorage.getItem(tab?.name) || ''
@@ -85,7 +86,7 @@ const TabDetail = ({tab, errors}: Props) => {
                 return (
                   <Grid item md={4} xs={12} key={idx}>
                     <Typography className={classes.question}>
-                      {field.name}
+                      {field.question}
                     </Typography>
                     <br />
                     <DiscreteSlider field={field} idx={idx} setValue={setValue} valueDisplay={true}/>
@@ -122,22 +123,11 @@ const TabDetail = ({tab, errors}: Props) => {
 TabDetail.getInitialProps = async ({ query, req }: NextPageContext) => {
   try {
 
-    const apiUrl = (path: string, req?: IncomingMessage) => {
-      if (!req && typeof window !== "undefined") return path;
-      const host = req
-        ? req.headers["x-forwarded-host"] || req.headers.host
-        : window.location.host;
-      const proto = req
-        ? req.headers["x-forwarded-proto"] || "http"
-        : window.location.protocol.slice(0, -1);
-      return `${proto}://${host}${path}`;
-    };
-
-
     const { id } = query
     const url = `/api/tabs/${Array.isArray(id) ? id[0] : id}`
-    const response: any = await fetcher(apiUrl(url, req))
-    if (!response?.data?.form) {
+
+    const response: {data: ITab, message?: string} = await fetcher(getApiUrl(url, req))
+    if (!response?.data?.questions) {
       throw new Error(response.message)
     }
     

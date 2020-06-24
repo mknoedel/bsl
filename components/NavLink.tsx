@@ -2,17 +2,19 @@ import * as React from 'react'
 import Link from 'next/link'
 import { ITab } from '../interfaces/index'
 import _ from 'lodash'
+import tabPath from '../utils/tabPath'
+import getTabLink from '../utils/getTabLink'
 
 type LinkProps = {
   tab: ITab,
   idx?: number
 }
 
-const NavLink: React.FunctionComponent<LinkProps> = ({
+const TabLink: React.FunctionComponent<LinkProps> = ({
   tab,
 }) => (
   <>
-    <Link href={tab.link}>
+    <Link href={`${tabPath}[id]`} as={getTabLink(tab.name)}>
       <a>{tab.name}</a>
     </Link>
     &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -30,4 +32,4 @@ const NavLink: React.FunctionComponent<LinkProps> = ({
   </>
 )
 
-export default NavLink
+export default TabLink

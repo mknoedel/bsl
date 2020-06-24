@@ -1,18 +1,18 @@
 import { IForm } from "../../interfaces"
 
 let socialForm: IForm = [
-    {name: 'Are you satisified Socially?'},
-    {name: 'Is my time spent well?'},
-    {name: 'Is it helping my Goals?'},
-    {name: 'Do you my Friends excite and push me?'},
-    {name: 'Do you allow myself to have fun?'},
-    {name: 'Am I good to others?'},
-    {name: 'Do I try New things?'},
-    {name: 'Is it increasing my awareness?'},
-    {name: 'Do I feel confident in social situations?'},
-    {name: 'Am I dating?'},
-    {name: 'Do I want to date?'},
-    {name: 'Does my significant other support me?'},
+    {question: 'Are you satisified Socially?'},
+    {question: 'Is my time spent well?'},
+    {question: 'Is it helping my Goals?'},
+    {question: 'Do you my Friends excite and push me?'},
+    {question: 'Do you allow myself to have fun?'},
+    {question: 'Am I good to others?'},
+    {question: 'Do I try New things?'},
+    {question: 'Is it increasing my awareness?'},
+    {question: 'Do I feel confident in social situations?'},
+    {question: 'Am I dating?'},
+    {question: 'Do I want to date?'},
+    {question: 'Does my significant other support me?'},
   ]
   
 export default socialForm

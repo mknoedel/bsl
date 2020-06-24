@@ -5,12 +5,6 @@ import theme from '../utils/theme';
 
 export default class MyDocument extends Document {
   render() {
-    // Store initial props from request data that we need to use again on
-    // the client. See:
-    // https://github.com/zeit/next.js/issues/3043#issuecomment-334521241
-    // https://github.com/zeit/next.js/issues/2252#issuecomment-353992669
-    // Alternatively, you could use a store, like Redux.
-    const { AuthUserInfo } = this.props
     return (
       <Html>
         <Head>

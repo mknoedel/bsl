@@ -63,7 +63,7 @@ export default function VerticalLinearStepper(props: Props) {
           <Step key={index}>
             <StepLabel>
                 {field.value && <>({field.value}){'  '}</>}
-                {field.name}
+                {field.question}
             </StepLabel>
             <StepContent>
               <Grid key={index}>

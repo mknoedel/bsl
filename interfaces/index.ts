@@ -1,14 +1,5 @@
-import { UrlObject } from "url";
-
-export type User = {
-  id: number
-  name: string
-}
-
-declare type Url = UrlObject | string;
-
 export interface IField {
-  name: string
+  question: string
   flip?: boolean
   value?: number
 }
@@ -17,14 +8,16 @@ export type IForm = IField[]
 
 export type ITab = {
   name: string
-  link: Url
-  optional?: boolean
-  form?: IForm
+  questions?: IForm
 }
 
-export type UserData = {
+export type User = {
   id: string,
   email: string,
   token: string,
   displayName: string
+}
+
+export type UserData = {
+  // arbitrary user data you are storing in your DB
 }

@@ -1,14 +1,14 @@
 import { IForm } from "../../interfaces"
 
 let funForm: IForm = [
-    {name: 'Is my life fun?'},
-    {name: 'Do I have fun with my family?'},
-    {name: 'Do I have fun with my friends?'},
-    {name: 'Do I have fun at school?'},
-    {name: 'Do I have fun at work?'},
-    {name: 'Does it have to be funny to be fun?', flip: true},
-    {name: 'Can I make any situation fun?'},
-    {name: 'Do I allow myself to have fun?'},
+    {question: 'Is my life fun?'},
+    {question: 'Do I have fun with my family?'},
+    {question: 'Do I have fun with my friends?'},
+    {question: 'Do I have fun at school?'},
+    {question: 'Do I have fun at work?'},
+    {question: 'Does it have to be funny to be fun?', flip: true},
+    {question: 'Can I make any situation fun?'},
+    {question: 'Do I allow myself to have fun?'},
   ]
   
 export default funForm

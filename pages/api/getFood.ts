@@ -2,6 +2,7 @@ import { verifyIdToken } from '../../utils/auth/firebaseAdmin'
 import { NextApiResponse, NextApiRequest } from 'next'
 const favoriteFoods = ['pizza', 'burger', 'chips', 'tortilla']
 
+// An example of how to set up a simple SWR --> used for keeping data up-to-date on the client.
 const getFood = async (req: NextApiRequest, res: NextApiResponse) => {
   const token: string = req.headers.token as string
 

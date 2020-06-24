@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import tabs from '../../../utils/tabs'
 import _ from 'lodash'
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+// This will be used as a means of retrieving data from the user for the existing form. Form data should come from the parent component.
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { id } = req.query
     const selected = _.find(tabs, (tab) => _.kebabCase(tab.name) === id)
