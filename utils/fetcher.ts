@@ -1,14 +1,24 @@
 import fetch from 'isomorphic-unfetch'
+import logout from './auth/logout'
 
-export async function fetcher(
-  input: RequestInfo,
-  init?: RequestInit
+export default async function (
+  url: RequestInfo,
+  token: string = ''
 ): Promise<any> {
-  try {
-    const data = await fetch(input, init).then(res => res.json())
-    return data
-  } catch (err) {
-    throw new Error(err.message)
+  const init: RequestInit = {
+    method: 'GET',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      token: token 
+    }),
+    credentials: 'same-origin',
   }
+  const response = await fetch(url, init)
+  const data = await response.json()
+  if (response?.status == 401 && data?.message?.match(/token has expired/)) {
+    console.log('caught with expired token')
+    logout()
+  }
+  return data
 }
-

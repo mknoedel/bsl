@@ -145,8 +145,9 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
   };
 
   const handleStart = () => {
-    setActiveStep(0)
+    setLoading(true)
     router.push(getTabLink(props.tabs[0].name) || "/")
+    setActiveStep(0)
   };
 
   const handleBack = () => {
@@ -155,6 +156,8 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
   };
 
   const handleStep = (step: number) => () => {
+    setLoading(true)
+    router.push(getTabLink(getStepName(step)) || "/")
     setActiveStep(step);
   };
 

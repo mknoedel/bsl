@@ -2,35 +2,20 @@ import * as React from 'react'
 import Layout from '../components/Layout'
 import { Hidden, Box } from '@material-ui/core'
 import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper'
-import Link from "next/link"
 import { useUser } from '../utils/auth/userUser'
-import useSWR from 'swr'
 import { ITab } from '../interfaces'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import initFirebase from '../utils/auth/initFirebase'
+import LoggedIn from '../components/LoggedIn'
+import LoggedOut from '../components/LoggedOut'
 
 
-const swrFetcher = (url: string, token: string) => {
-  fetch(url, {
-    method: 'GET',
-    headers: new Headers({ 'Content-Type': 'application/json', token }),
-    credentials: 'same-origin',
-  }).then((res) => res.json())
-}
-
-type Props = {
+const IndexPage = (props: {
   tabs: ITab[]
-  errors?: string
-}
-
-const IndexPage = ({tabs, errors}: Props) => {
-  console.log({tabs})
+}) => {
+  const { tabs } = props
   const { user, logout } = useUser()
-  const { data, error } = useSWR<any>(
-    user ? ['/api/getFood', user.token] : null,
-    swrFetcher
-  )
 
   return (
     <Layout title='Home'>
@@ -51,43 +36,12 @@ const IndexPage = ({tabs, errors}: Props) => {
       </HorizontalNonLinearAlternativeLabelStepper>
 
       {!user?.id ? (
-          <>
-          <p>Hi there!</p>
-          <p>
-            You are not signed in.{' '}
-            <Link href={'/auth'}>
-              <a>Sign in</a>
-            </Link>
-          </p>
-        </>
+        <LoggedOut/>
       ) : (
-        <div>
-          <div>
-            <p>You're signed in. Email: {user.email}</p>
-            <p>Display Name: {user.displayName}</p>
-            <p
-              style={{
-                display: 'inlinelock',
-                color: 'blue',
-                textDecoration: 'underline',
-                cursor: 'pointer',
-              }}
-              onClick={() => logout()}
-            >
-              Log out
-            </p>
-          </div>
-          <div>
-            <Link href={'/spaces'}>
-              <a>[ Spaces ]</a>
-            </Link>
-            <Link href={'/account'}>
-              <a>[ Account Management ]</a>
-            </Link>
-          </div>
-          {error && <div>Failed to fetch food!</div>}
-          {data && <div>Your favorite food is {data.food}.</div>}
-        </div>
+        <LoggedIn
+          user={user}
+          logout={logout}
+        />
       )}
     </Layout>
   )
@@ -99,7 +53,6 @@ const IndexPage = ({tabs, errors}: Props) => {
 export async function getStaticProps() {
   initFirebase()
   const snapshot = await firebase.firestore().collection("Tabs").get()
-  console.log(snapshot.docs.map(doc => doc.data()))
   return {
     props: {
       tabs: snapshot.docs.map(doc => doc.data())

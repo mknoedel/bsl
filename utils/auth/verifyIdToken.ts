@@ -5,7 +5,7 @@ export default (token: string) => {
     .auth()
     .verifyIdToken(token, true)
     .catch(error => {
-      console.error("verifyIdToken", error)
+      console.error("verifyIdToken: ", error)
       throw error;
     });
 };

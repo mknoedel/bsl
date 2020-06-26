@@ -11,7 +11,10 @@ import { User } from '../interfaces'
 initFirebase()
 
 const firebaseAuthConfig: firebaseui.auth.Config = {
+  // Popup signin flow rather than redirect flow.
   signInFlow: 'popup',
+  // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+  signInSuccessUrl: '/',
   // Auth providers
   // https://github.com/firebase/firebaseui-web#configure-oauth-providers
   signInOptions: [
@@ -19,8 +22,8 @@ const firebaseAuthConfig: firebaseui.auth.Config = {
       provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
       requireDisplayName: true,
     },
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
-  signInSuccessUrl: '/',
   credentialHelper: 'none',
   callbacks: {
     signInSuccessWithAuthResult: ({ user }: any) => {

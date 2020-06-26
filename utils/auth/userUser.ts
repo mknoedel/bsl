@@ -5,6 +5,8 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import initFirebase from '../auth/initFirebase'
 import { User } from '../../interfaces'
+import fetcher from '../fetcher'
+import logout from './logout'
 
 initFirebase()
 
@@ -23,21 +25,6 @@ const useUser = (): {
     return newUser
   }
 
-  const logout = async () => {
-    return firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        cookies.remove('auth')
-        Router.push('/auth')
-      })
-      .catch((e) => {
-        console.error(e)
-        cookies.remove('auth')
-        Router.push('/auth')
-      })
-  }
-
   const getFromCookie = async () => {
     const cookie = cookies.get('auth')
     if (!cookie) {
@@ -51,7 +38,9 @@ const useUser = (): {
       Router.push('/')
       return
     }
-    setUser(JSON.parse(cookie))
+    setUser(parsedCookie)
+    // check token status
+    await fetcher('/api/users/verifyIdToken', parsedCookie.token)
   }
 
   useEffect(() => {
