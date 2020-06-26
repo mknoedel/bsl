@@ -13,7 +13,7 @@ service cloud.firestore {
     }
 
     match /{document=**} {
-      allow read, write, get, list, create, update, delete: if signedInOrPublic();
+      allow read, write, get, list, create, update, delete: if true
     }
     match /spaces/{document=**} {
       allow update, delete: if signedInOrPublic() && isPostOwner();

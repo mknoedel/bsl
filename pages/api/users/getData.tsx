@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import initFirebase from '../../../utils/auth/initFirebase';
-import { verifyIdToken } from '../../../utils/auth/firebaseAdmin';
+import verifyIdToken from '../../../utils/auth/verifyIdToken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { UserData } from '../../../interfaces';
 

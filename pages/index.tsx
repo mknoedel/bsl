@@ -1,26 +1,33 @@
 import * as React from 'react'
-import { NextPage } from 'next'
 import Layout from '../components/Layout'
 import { Hidden, Box } from '@material-ui/core'
 import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper'
-import tabs from '../utils/tabs'
 import Link from "next/link"
 import { useUser } from '../utils/auth/userUser'
 import useSWR from 'swr'
-import initFirebase from "../utils/auth/initFirebase"
+import { ITab } from '../interfaces'
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import initFirebase from '../utils/auth/initFirebase'
 
-initFirebase()
 
-const swrFetcher = (url: string, token: string) =>
+const swrFetcher = (url: string, token: string) => {
   fetch(url, {
     method: 'GET',
     headers: new Headers({ 'Content-Type': 'application/json', token }),
     credentials: 'same-origin',
   }).then((res) => res.json())
+}
 
-const IndexPage: NextPage = () => {
+type Props = {
+  tabs: ITab[]
+  errors?: string
+}
+
+const IndexPage = ({tabs, errors}: Props) => {
+  console.log({tabs})
   const { user, logout } = useUser()
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<any>(
     user ? ['/api/getFood', user.token] : null,
     swrFetcher
   )
@@ -86,8 +93,22 @@ const IndexPage: NextPage = () => {
   )
 }
 
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries. See the "Technical details" section.
+export async function getStaticProps() {
+  initFirebase()
+  const snapshot = await firebase.firestore().collection("Tabs").get()
+  console.log(snapshot.docs.map(doc => doc.data()))
+  return {
+    props: {
+      tabs: snapshot.docs.map(doc => doc.data())
+    },
+  }
+}
+
+// Can use if we have server-side Auth //
 // IndexPage.getInitialProps = async ({ req }: NextPageContext) => {
-  
 //   JSON.parse(cookie)
 //   const db = firebase.firestore();
 //   const ref = db.collection("Spaces").doc(id);

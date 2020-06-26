@@ -1,0 +1,23 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "commonjs",
+		"jsx": "preserve",
+		"allowJs": false,
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"removeComments": false,
+		"preserveConstEnums": true,
+		"sourceMap": true,
+		"skipLibCheck": true,
+		"typeRoots": ["./node_modules/@types"],
+		"lib": ["es2017"],
+		"esModuleInterop": true,
+		"outDir": "./out",
+		"baseUrl": ".",
+		"resolveJsonModule": true
+	}
+}

@@ -1,4 +1,4 @@
-import { verifyIdToken } from '../../utils/auth/firebaseAdmin'
+import verifyIdToken from '../../utils/auth/verifyIdToken'
 import { NextApiResponse, NextApiRequest } from 'next'
 const favoriteFoods = ['pizza', 'burger', 'chips', 'tortilla']
 
