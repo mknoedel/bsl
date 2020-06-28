@@ -9,6 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import { IForm } from '../interfaces';
 import { Grid } from '@material-ui/core';
 import DiscreteSlider from './DiscreteSlider';
+import _ from 'lodash';
 
 interface Props {
     form?: IForm
@@ -34,11 +35,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function VerticalLinearStepper(props: Props) {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const {form, setValue} = props
+  const classes = useStyles()
+  const { form, setValue } = props
+  const [ activeStep, setActiveStep ] = React.useState(0)
 
   const handleNext = () => {
+    //@ts-ignore
+    if (form[activeStep].value < 1) {
+      setValue(1, activeStep)
+    }
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -56,13 +61,31 @@ export default function VerticalLinearStepper(props: Props) {
     }
   }
 
+  function findStartingIndex() {
+    const index: number = form?.findIndex(c => !c.value) || 0 
+    return index < 0 ? activeStep : index
+  }
+
+  React.useEffect(() => {
+    const startIndex = findStartingIndex()
+    const diff = Math.abs(startIndex - activeStep)
+
+    if (startIndex > activeStep) {
+      _.times(diff, handleNext)
+    }
+    if (startIndex < activeStep) {
+      _.times(diff, handleBack)
+    }
+  //@ts-ignore
+  }, [form[0].question])
+
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} orientation="vertical">
         {form?.map((field, index) => (
           <Step key={index}>
             <StepLabel>
-                {field.value && <>({field.value}){'  '}</>}
+                {!!field.value && <>({field.value}){'  '}</>}
                 {field.question}
             </StepLabel>
             <StepContent>

@@ -1,23 +1,23 @@
 import * as React from 'react'
-import { NextPageContext } from 'next'
 import Layout from '../../components/Layout'
-import fetcher from '../../utils/fetcher'
 import DiscreteSlider from '../../components/DiscreteSlider'
 import _ from 'lodash'
 import { Grid, Typography, makeStyles, Hidden, Container } from '@material-ui/core'
-import { ITab } from '../../interfaces'
+import { ITab, IField, IForm } from '../../interfaces'
 import getRating from '../../utils/getRating'
 import VerticalLinearStepper from '../../components/VertStepper'
 import HorizontalNonLinearAlternativeLabelStepper from '../../components/Stepper'
-import tabs from '../../utils/tabs'
 import TabGauge from '../../components/TabGauge'
-import { getApiUrl } from '../../utils/getApiUrl'
+import { useRouter, NextRouter } from 'next/router'
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import initFirebase from '../../utils/auth/initFirebase'
+import getTabLink from '../../utils/getTabLink'
+// import { NextPageContext } from 'next'
+// import fetcher from '../../utils/fetcher'
+// import { getApiUrl } from '../../utils/getApiUrl'
 
-
-type Props = {
-  tab: ITab
-  errors?: string
-}
+initFirebase()
 
 const useStyles = makeStyles(theme => ({
   question: {
@@ -36,27 +36,52 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const TabDetail = ({tab, errors}: Props) => {
-  console.log(tab, errors)
+function getTab(tabs: ITab[], router: NextRouter): ITab {
+  return _.find(tabs, tab => getTabLink(tab.name) === router.asPath) || {name: "Loading..."}
+}
 
-  if (errors || !tab) {
+const TabDetail = (props: {
+  tabs: ITab[]
+}) => {
+  const { tabs } = props
+  const router = useRouter()
+  const [tab, setTab] = React.useState<ITab>(getTab(props.tabs, router))
+
+  if (!tab) {
     return (
       <Layout title={`Error`}>
         <p>
-          <span style={{ color: 'red' }}>Error:</span> {errors || 'Something went wrong.'}
+          <span style={{ color: 'red' }}>Error:</span> {'Something went wrong.'}
         </p>
       </Layout>
     )
   }
 
   const classes = useStyles()
-  const [form, setForm] = React.useState(tab.questions);
+  const [form, setForm] = React.useState<IForm>(tab.questions || [])
+  const [rating, setRating] = React.useState<number>(0)
+  const [loading, setLoading] = React.useState(false);
+
 
   React.useEffect(() => {
-    let storedTab: string = localStorage.getItem(tab?.name) || ''
-    if (storedTab)
-      setForm(JSON.parse(storedTab))
-  }, [])
+    setTab(getTab(props.tabs, router))
+  },[router.asPath])
+
+  React.useEffect(() => {
+    const _form = tab.questions || []
+    let storedTab: IForm = JSON.parse(localStorage.getItem(tab?.name) || '[]')
+    if (storedTab) {
+      setForm(_form.map((question: IField) => {
+        question.value = storedTab.find(c => c.question === question.question)?.value || 0
+        return question
+      }))
+    }
+    setLoading(false)
+  }, [tab])
+
+  React.useEffect(() => {
+    setRating(getRating(form))
+  }, [form])
 
   const setValue = (value: number, index: number) => {
     let newForm = _.clone(form)
@@ -68,11 +93,9 @@ const TabDetail = ({tab, errors}: Props) => {
     localStorage.setItem(tab?.name, JSON.stringify(newForm))
   }
 
-  let rating = getRating(form)
-
   return (
     <Layout title={tab.name}>
-      <HorizontalNonLinearAlternativeLabelStepper tabs={tabs}>
+      <HorizontalNonLinearAlternativeLabelStepper tabs={tabs} loading={loading} setLoading={setLoading}>
         <Container maxWidth="lg">
           <br />
           <Grid container spacing={1} id="tab-content">
@@ -81,19 +104,21 @@ const TabDetail = ({tab, errors}: Props) => {
               <Typography className={classes.title}>{tab?.name}</Typography>
             </Grid>
 
-            <Hidden smDown>
-              {_.map(form, (field, idx) => {
-                return (
-                  <Grid item md={4} xs={12} key={idx}>
-                    <Typography className={classes.question}>
-                      {field.question}
-                    </Typography>
-                    <br />
-                    <DiscreteSlider field={field} idx={idx} setValue={setValue} valueDisplay={true}/>
-                  </Grid>
-                )
-              })}
-            </Hidden>
+            {/* <Grid container spacing={1} id="questions-container"> */}
+              <Hidden smDown initialWidth={'lg'}>
+                {_.map(form, (field, idx) => {
+                  return (
+                    <Grid item md={4} xs={12} key={idx}>
+                      <Typography className={classes.question}>
+                        {field.question}
+                      </Typography>
+                      <br />
+                      <DiscreteSlider field={field} idx={idx} setValue={setValue} valueDisplay={true}/>
+                    </Grid>
+                  )
+                })}
+              </Hidden>
+            {/* </Grid> */}
 
             <Hidden mdUp>
               <VerticalLinearStepper form={form} setValue={setValue}/>
@@ -108,7 +133,7 @@ const TabDetail = ({tab, errors}: Props) => {
               </Typography>
             </Grid>
 
-            <Hidden smDown>
+            <Hidden smDown initialWidth={'lg'}>
               <Grid item md={12}>
                 <TabGauge score={rating}/> 
               </Grid>
@@ -120,21 +145,48 @@ const TabDetail = ({tab, errors}: Props) => {
     </Layout>
   )
 }
-TabDetail.getInitialProps = async ({ query, req }: NextPageContext) => {
-  try {
 
-    const { id } = query
-    const url = `/api/tabs/${Array.isArray(id) ? id[0] : id}`
-
-    const response: {data: ITab, message?: string} = await fetcher(getApiUrl(url, req))
-    if (!response?.data?.questions) {
-      throw new Error(response.message)
-    }
-    
-    return { tab: response.data }
-  } catch (err) {
-    return { errors: err.message }
-  }
+// This function gets called at build time
+export async function getStaticPaths() {
+  // Call an external API endpoint to get posts
+  const snapshot = await firebase.firestore().collection("Tabs").get()
+  // Get the paths we want to pre-render based on posts
+  const paths = snapshot.docs.map(doc => ({
+    params: { id: _.kebabCase(doc.data().name) },
+  }))
+  // We'll pre-render only these paths at build time.
+  // { fallback: false } means other routes should 404.
+  return { paths, fallback: false }
 }
+
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries. See the "Technical details" section.
+export async function getStaticProps() {
+  const snapshot = await firebase.firestore().collection("Tabs").get()
+  let ret = {
+    props: {
+      tabs: snapshot.docs.map(doc => doc.data())
+    },
+  }
+  return ret
+}
+
+// TabDetail.getInitialProps = async ({ query, req }: NextPageContext) => {
+//   try {
+
+//     const { id } = query
+//     const url = `/api/tabs/${Array.isArray(id) ? id[0] : id}`
+
+//     const response: {data: ITab, message?: string} = await fetcher(getApiUrl(url, req))
+//     if (!response?.data?.questions) {
+//       throw new Error(response.message)
+//     }
+    
+//     return { tab: response.data }
+//   } catch (err) {
+//     return { errors: err.message }
+//   }
+// }
 
 export default TabDetail

@@ -7,7 +7,10 @@ import ResultsChart from '../components/ResultsChart';
 import PrintButton from '../components/PrintButton';
 import ResultsChartMobile from '../components/ResultsChartMobile';
 import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper';
-import tabs from '../utils/tabs';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
+import initFirebase from '../utils/auth/initFirebase'
+import { ITab } from '../interfaces';
 
 const useStyles = makeStyles((theme) => ({
   graph: {
@@ -22,14 +25,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-
-const ResultsPage = () => {
+const ResultsPage = (props: {
+  tabs: ITab[]
+}) => {
   const classes = useStyles();
 
   return (
     <Layout title="Results" >
 
-      <HorizontalNonLinearAlternativeLabelStepper tabs={tabs}>
+      <HorizontalNonLinearAlternativeLabelStepper tabs={props.tabs}>
         <Container maxWidth="lg">
 
         <Hidden smDown>
@@ -64,6 +68,19 @@ const ResultsPage = () => {
 
     </Layout>
   )
+}
+
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries. See the "Technical details" section.
+export async function getStaticProps() {
+  initFirebase()
+  const snapshot = await firebase.firestore().collection("Tabs").get()
+  return {
+    props: {
+      tabs: snapshot.docs.map(doc => doc.data())
+    },
+  }
 }
 
 export default ResultsPage

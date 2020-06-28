@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import { ITab } from '../interfaces';
 import { useRouter } from 'next/router'
 import _ from 'lodash';
-import { Hidden, Box, Container } from '@material-ui/core';
+import { Hidden, Box, Container, LinearProgress } from '@material-ui/core';
 import getTabLink from '../utils/getTabLink';
 
 interface IButtonProps {
@@ -19,7 +19,9 @@ interface ISetProps {
 }
 interface Props {
   tabs: ITab[]
-  children: any
+  children: any,
+  loading?: boolean,
+  setLoading?: (state: boolean) => void
 }
 
 const useStyles = makeStyles(theme => ({
@@ -51,16 +53,16 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function HorizontalNonLinearAlternativeLabelStepper(props: Props) {
+  const { tabs, loading = false, setLoading = _.noop } = props
   const classes = useStyles();
   const router = useRouter()
-  let initialStep = _.findIndex(props.tabs, tab => getTabLink(tab.name) === router.asPath)
+  let initialStep = _.findIndex(tabs, tab => getTabLink(tab.name) === router.asPath)
 
   const [activeStep, setActiveStep] = React.useState(initialStep);
   const [completed, setCompleted] = React.useState(new Array());
   const [skipped, setSkipped] = React.useState(new Array());
-  const [loading, setLoading] = React.useState(false);
 
- useEffect(() => {
+  useEffect(() => {
     let storedActiveStep = localStorage.getItem('activeStep') || ''
     let storedCompleted = localStorage.getItem('completed') || ''
     let storedSkipped = localStorage.getItem('skipped') || ''
@@ -72,10 +74,11 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   useEffect(() => {
     localStorage.setItem('activeStep', String(activeStep))
-    let newTab = props.tabs[activeStep]
+    let newTab = tabs[activeStep]
     if (getTabLink(newTab?.name) && (router.asPath !== getTabLink(newTab.name))) {
       setLoading(true)
-      router.push(getTabLink(newTab.name) || "/")
+      const tabLink = getTabLink(newTab.name)
+      router.push(tabLink ? "/tabs/[id]" : "/", tabLink ? tabLink : undefined)
     }
   }, [activeStep])
   useEffect(() => {
@@ -84,19 +87,40 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
   useEffect(() => {
     localStorage.setItem('skipped', JSON.stringify(skipped))
   }, [skipped])
+ 
+  // Prefetch
+  useEffect(() => {
+    // Next page
+    if (isLastStep()) {
+      if (!allStepsBuyOneCompleted()) {
+        // It's the last step, but not all steps have been completed
+        // find the first step that includes been completed
+        router.prefetch("/tabs/[id]", getTabLink(steps.find((_step, i) => !completed.includes(i))) || undefined)
+      } else {
+        router.prefetch('/results')
+      }
+    } else {
+      router.prefetch("/tabs/[id]", getTabLink(steps[activeStep + 1]) || undefined)
+    }
+    // Previous page
+    if (activeStep) {
+      router.prefetch("/tabs/[id]", getTabLink(tabs[activeStep - 1]?.name) || undefined)
+    }
+  }, [router.asPath])
 
-  const steps = _.map(props.tabs, c => c.name);
+
+  const steps = _.map(tabs, c => c.name);
 
   const totalSteps = () => {
     return steps.length;
   };
 
   const getStepName = (step: number): string => {
-    return props.tabs[step]?.name || 'unknown'
+    return tabs[step]?.name || 'unknown'
   }
 
   // const isStepOptional = (step: number) => {
-  //   return props.tabs[step]?.optional || true
+  //   return tabs[step]?.optional || true
   // };
 
   const handleSkip = () => {
@@ -119,6 +143,10 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   const allStepsCompleted = () => {
     return completedSteps() === totalSteps() - skippedSteps();
+  };
+
+  const allStepsBuyOneCompleted = () => {
+    return completedSteps() === totalSteps() - skippedSteps() + 1
   };
 
   const isLastStep = () => {
@@ -146,7 +174,6 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   const handleStart = () => {
     setLoading(true)
-    router.push(getTabLink(props.tabs[0].name) || "/")
     setActiveStep(0)
   };
 
@@ -157,7 +184,6 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   const handleStep = (step: number) => () => {
     setLoading(true)
-    router.push(getTabLink(getStepName(step)) || "/")
     setActiveStep(step);
   };
 
@@ -184,6 +210,11 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
 
   return (
     <div className={classes.root}>
+      
+      {loading && (
+        <LinearProgress />
+      )}
+
       <Hidden mdDown>
         <Stepper alternativeLabel nonLinear activeStep={activeStep}>
           {steps.map((label, index) => {
@@ -210,7 +241,6 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
           })}
         </Stepper>
        </Hidden>
-
 
       <div>
         <div>
@@ -299,7 +329,7 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
         <Hidden lgUp>
           <hr />
           <nav>
-            {_.map(props.tabs, (tab: ITab, idx: number) => <Button key={idx} onClick={handleStep(idx)}>{tab.name}</Button>)}
+            {_.map(tabs, (tab: ITab, idx: number) => <Button key={idx} onClick={handleStep(idx)}>{tab.name}</Button>)}
           </nav>
           <hr />
         </Hidden>
