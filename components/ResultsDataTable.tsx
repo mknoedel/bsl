@@ -5,11 +5,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import tabs from '../utils/tabs';
 import getRating from '../utils/getRating';
 import { makeStyles, Grid } from '@material-ui/core';
 import React from 'react';
 import _ from 'lodash';
+import { ITab } from '../interfaces';
 
 interface IResultsData {
   component: string,
@@ -22,7 +22,10 @@ const useStyles = makeStyles(() => ({
     }
   }))
 
-const ResultsDataTable = () => {
+const ResultsDataTable = (props: {
+  tabs: ITab[]
+}) => {
+    const { tabs } = props
     const classes = useStyles();
     const [results, setResults] = React.useState<IResultsData[]>([])
   

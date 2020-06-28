@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const ResultsPage = (props: {
   tabs: ITab[]
 }) => {
+  const { tabs } = props
   const classes = useStyles();
 
   return (
@@ -40,7 +41,7 @@ const ResultsPage = (props: {
          <Grid container >
             <img src='BSL circle logo.png' height="40px"/>
             <Typography className={classes.title}>Results</Typography>
-            <ResultsChart/>
+            <ResultsChart tabs={tabs}/>
           </Grid>
         </Hidden>
 
@@ -49,7 +50,7 @@ const ResultsPage = (props: {
               <img src='BSL circle logo.png' height="40px" style={{marginTop:"8px"}}/>
               <Typography className={classes.title}>Results</Typography>
               <div className={classes.graph}>
-                <ResultsChartMobile/>
+                <ResultsChartMobile tabs={tabs}/>
               </div>
             </Grid>
           </Hidden>
@@ -70,16 +71,13 @@ const ResultsPage = (props: {
   )
 }
 
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries. See the "Technical details" section.
 export async function getStaticProps() {
   initFirebase()
   const snapshot = await firebase.firestore().collection("Tabs").get()
   return {
     props: {
       tabs: snapshot.docs.map(doc => doc.data())
-    },
+    }
   }
 }
 

@@ -13,9 +13,6 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import initFirebase from '../../utils/auth/initFirebase'
 import getTabLink from '../../utils/getTabLink'
-// import { NextPageContext } from 'next'
-// import fetcher from '../../utils/fetcher'
-// import { getApiUrl } from '../../utils/getApiUrl'
 
 initFirebase()
 
@@ -148,7 +145,6 @@ const TabDetail = (props: {
 
 // This function gets called at build time
 export async function getStaticPaths() {
-  // Call an external API endpoint to get posts
   const snapshot = await firebase.firestore().collection("Tabs").get()
   // Get the paths we want to pre-render based on posts
   const paths = snapshot.docs.map(doc => ({
@@ -159,34 +155,13 @@ export async function getStaticPaths() {
   return { paths, fallback: false }
 }
 
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries. See the "Technical details" section.
 export async function getStaticProps() {
   const snapshot = await firebase.firestore().collection("Tabs").get()
-  let ret = {
+  return {
     props: {
       tabs: snapshot.docs.map(doc => doc.data())
-    },
+    }
   }
-  return ret
 }
-
-// TabDetail.getInitialProps = async ({ query, req }: NextPageContext) => {
-//   try {
-
-//     const { id } = query
-//     const url = `/api/tabs/${Array.isArray(id) ? id[0] : id}`
-
-//     const response: {data: ITab, message?: string} = await fetcher(getApiUrl(url, req))
-//     if (!response?.data?.questions) {
-//       throw new Error(response.message)
-//     }
-    
-//     return { tab: response.data }
-//   } catch (err) {
-//     return { errors: err.message }
-//   }
-// }
 
 export default TabDetail

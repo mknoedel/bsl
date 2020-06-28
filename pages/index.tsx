@@ -56,26 +56,8 @@ export async function getStaticProps() {
   return {
     props: {
       tabs: snapshot.docs.map(doc => doc.data())
-    },
+    }
   }
 }
-
-// Can use if we have server-side Auth //
-// IndexPage.getInitialProps = async ({ req }: NextPageContext) => {
-//   JSON.parse(cookie)
-//   const db = firebase.firestore();
-//   const ref = db.collection("Spaces").doc(id);
-//   let form = ref.get()
-//     .then(doc => {
-//       if (!doc.exists) {
-//         console.log('No such document!');
-//       } else {
-//         console.log('Document data:', doc.data());
-//       }
-//     })
-//     .catch(err => {
-//       console.log('Error getting document', err);
-//     })
-// }
 
 export default IndexPage

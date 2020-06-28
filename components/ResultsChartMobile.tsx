@@ -3,20 +3,23 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import getRating from '../utils/getRating'
 import _ from 'lodash'
+import { ITab } from '../interfaces'
 
 interface Scores {
     name: string
     rating: number
 }
 
-const ResultsChartMobile = () => {
-
+const ResultsChartMobile = (props: {
+    tabs: ITab[]
+  }) => {
+    const { tabs } = props
     const [scores, setScores] = React.useState<Scores[]>([])
     React.useEffect(() => {
-        let results = _.map(tabs, (tab) => {
-        let storedTab: string = localStorage.getItem(tab?.name) || ''
-        let rating = storedTab ? getRating(JSON.parse(storedTab)) : 0
-        return {rating: rating, name:tab.name}
+            let results = _.map(tabs, (tab) => {
+            let storedTab: string = localStorage.getItem(tab?.name) || ''
+            let rating = storedTab ? getRating(JSON.parse(storedTab)) : 0
+            return {rating: rating, name:tab.name}
         })
         setScores(results)
     }, [])
@@ -90,6 +93,6 @@ const ResultsChartMobile = () => {
         </div>
     )
 }
-  
+ 
 export default ResultsChartMobile
   

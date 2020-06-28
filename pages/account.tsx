@@ -7,11 +7,11 @@ import initFirebase from "../utils/auth/initFirebase";
 import Router from "next/router";
 import { useUser } from "../utils/auth/userUser";
 
-initFirebase();
-
-const Account = (props: any) => {
+const Account = (props: {
+  environment: string
+}) => {
+  const { environment } = props
   const { user, logout } = useUser()
-  const { environment } = props;
 
   return (
     <>
@@ -47,12 +47,23 @@ const Account = (props: any) => {
   );
 };
 
-Account.getInitialProps = async function() {
-  const getEnvironment = firebase.functions().httpsCallable("getEnvironment");
-  const result = await getEnvironment({});
+export async function getStaticProps() {
+  initFirebase()
+  const getEnvironment = firebase.functions().httpsCallable("getEnvironment")
+  const result = await getEnvironment({})
   return {
-    environment: result.data.environment
-  };
-};
+    props: {
+      environment: result.data.environment
+    }
+  }
+}
+
+// Account.getInitialProps = async function() {
+//   const getEnvironment = firebase.functions().httpsCallable("getEnvironment");
+//   const result = await getEnvironment({});
+//   return {
+//     environment: result.data.environment
+//   };
+// };
 
 export default Account;

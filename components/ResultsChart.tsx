@@ -1,17 +1,19 @@
 import * as React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import tabs from '../utils/tabs'
 import getRating from '../utils/getRating'
 import _ from 'lodash'
+import { ITab } from '../interfaces'
 
 interface Scores {
     name: string
     rating: number
 }
 
-const ResultsChart = () => {
-
+const ResultsChart = (props: {
+    tabs: ITab[]
+  }) => {
+    const { tabs } = props
     const [scores, setScores] = React.useState<Scores[]>([])
     React.useEffect(() => {
         let results = _.map(tabs, (tab) => {
@@ -79,6 +81,6 @@ const ResultsChart = () => {
         </div>
     )
 }
-  
+
 export default ResultsChart
   

@@ -1,5 +1,6 @@
 import { IncomingMessage } from "http";
 
+// @depricated: Only needed if you are deploying to an environment with a changing url
 export const getApiUrl = (path: string, req?: IncomingMessage) => {
   if (!req && typeof window !== "undefined") return path;
   const host = req
