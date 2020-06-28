@@ -11,8 +11,9 @@
     "production": "firebase use production",
     "preserve": "npm run build",
     "serve": "npm run preserve && cross-env firebase emulators:start",
-    "deployStaging": "cd functions && npm install && cd .. && firebase deploy -P staging",
-    "deployProduction": "cd functions && npm install && cd .. && firebase deploy -P production",
+    "deployFirebaseStaging": "cd functions && npm install && cd .. && firebase deploy -P staging",
+    "deployFirebaseProduction": "cd functions && npm install && cd .. && firebase deploy -P production",
+    "rebuildMasterNow": "curl -X POST https://api.vercel.com/v1/integrations/deploy/QmauP4xPvQjCKhUkuEhF5n4shqv6AchaaLvYEQzXi2z7NS/oj4zZtiJuP",
     "tsc": "tsc"
   },
   "dependencies": {

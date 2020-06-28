@@ -1,4 +1,6 @@
 {
+  "name": "bsl-balance",
+  "version": 2,
   "env": {
     "FIREBASE_API_KEY": "@firebase-api-key",
     "FIREBASE_AUTH_DOMAIN": "@firebase-auth-domain",
