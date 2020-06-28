@@ -9,4 +9,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
         return res.status(401).send({message: error.errorInfo?.message || error.message});
     }
-    }
+}

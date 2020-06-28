@@ -35,7 +35,6 @@ const useUser = (): {
     if (parsedCookie.error) {
       console.log(`INVALID COOKIE: ${parsedCookie.error}`)
       logout()
-      Router.push('/')
       return
     }
     setUser(parsedCookie)

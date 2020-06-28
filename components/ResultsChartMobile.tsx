@@ -1,7 +1,6 @@
 import * as React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import tabs from '../utils/tabs'
 import getRating from '../utils/getRating'
 import _ from 'lodash'
 

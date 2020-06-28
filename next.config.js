@@ -1,7 +1,7 @@
 // https://github.com/zeit/next.js/issues/7320#issuecomment-491906055
 const withCSS = require("@zeit/next-css")
 
-require("dotenv").config();
+// require("dotenv").config();
 
 module.exports = withCSS({
   webpack: (config, { isServer }) => {

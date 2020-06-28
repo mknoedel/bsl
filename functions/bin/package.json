@@ -1,0 +1,14 @@
+{
+	"name": "bin",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "UNLICENSED",
+	"scripts": {
+		"buildTabs": "yarn ts-node buildTabs.ts"
+	},
+	"dependencies": {
+		"argparse": "^1.0.10",
+		"ts-node": "^8.10.2",
+		"typescript": "^3.9.5"
+	}
+}
