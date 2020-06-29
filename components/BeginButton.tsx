@@ -19,7 +19,8 @@ const BeginButton = (props: {
     >
       {user?.id ? (
         <Button
-          autoFocus
+          // autoFocus
+          suppressHydrationWarning={true}
           style={{justifyContent: 'center'}}
           variant="contained"
           color="primary"

@@ -305,7 +305,7 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
             </Container>
           )}
 
-          {router.asPath === '/' && <BeginButton handleStart={handleStart} classes={classes} />}
+          {router.asPath === '/' && !loading && <BeginButton handleStart={handleStart} classes={classes} />}
         </div>
       </div>
 
