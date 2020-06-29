@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import { ITab } from '../interfaces';
 import { useRouter } from 'next/router'
 import _ from 'lodash';
-import { Hidden, Box, Container, LinearProgress } from '@material-ui/core';
+import { Hidden, Container, LinearProgress } from '@material-ui/core';
 import getTabLink from '../utils/getTabLink';
 import BeginButton from './BeginButton';
 
