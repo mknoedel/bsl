@@ -2,20 +2,20 @@ import * as React from 'react'
 import Layout from '../components/Layout'
 import { Hidden, Box } from '@material-ui/core'
 import HorizontalNonLinearAlternativeLabelStepper from '../components/Stepper'
-import { useUser } from '../utils/auth/userUser'
 import { ITab } from '../interfaces'
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import initFirebase from '../utils/auth/initFirebase'
-import LoggedIn from '../components/LoggedIn'
-import LoggedOut from '../components/LoggedOut'
+// import { useUser } from '../utils/auth/userUser'
+// import LoggedIn from '../components/LoggedIn'
+// import LoggedOut from '../components/LoggedOut'
 
 
 const IndexPage = (props: {
   tabs: ITab[]
 }) => {
   const { tabs } = props
-  const { user, logout } = useUser()
+  // const { user, logout } = useUser()
 
   return (
     <Layout title='Home'>
@@ -35,14 +35,14 @@ const IndexPage = (props: {
         </Box>
       </HorizontalNonLinearAlternativeLabelStepper>
 
-      {!user?.id ? (
+      {/* {!user?.id ? (
         <LoggedOut/>
       ) : (
         <LoggedIn
           user={user}
           logout={logout}
         />
-      )}
+      )} */}
     </Layout>
   )
 }

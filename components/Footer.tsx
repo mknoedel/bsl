@@ -2,10 +2,11 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
 import { Box } from '@material-ui/core';
+import { useUser } from '../utils/auth/userUser';
 
 const Footer: React.FunctionComponent<{}> = () =>  {
   const router = useRouter()
-
+  const { user, logout } = useUser()
 
   const handleReset = () => {
     localStorage.clear()
@@ -21,20 +22,38 @@ const Footer: React.FunctionComponent<{}> = () =>  {
         justifyContent="center"
         style={{marginBottom: "35px"}}
       >
-        BSL Balance &nbsp;&nbsp;|&nbsp;&nbsp;
-
+        BSL Balance
+        
+        &nbsp;&nbsp;|&nbsp;&nbsp;
         <Link href={"/"}>
           <a>{"Home"}</a>
         </Link>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
 
+        {user?.id && (
+          <>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <Link href={'/account/update-name'}>
+              <a>Account Management</a>
+            </Link>
+          </>
+        )}
+
+        &nbsp;&nbsp;|&nbsp;&nbsp;
         <a onClick={handleReset}>Total Reset</a>
+
+        {user?.id && (
+          <>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a onClick={logout}>Logout</a>
+          </>
+        )}
 
         <style jsx>{`
             a {
               font-family: 'Arial';
               text-decoration: none;
               color: blue;
+              cursor: pointer;
             }
 
             a:hover {

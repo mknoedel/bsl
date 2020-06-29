@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import _ from 'lodash';
 import { Hidden, Box, Container, LinearProgress } from '@material-ui/core';
 import getTabLink from '../utils/getTabLink';
+import BeginButton from './BeginButton';
 
 interface IButtonProps {
     optional?: any,
@@ -304,24 +305,7 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
             </Container>
           )}
 
-          {router.asPath === '/' && (
-            <Box 
-              display="flex" 
-              width={'100%'} height={30} 
-              alignItems="center"
-              justifyContent="center"
-              style={{marginBottom: "35px"}}
-            >
-              <Button
-                style={{justifyContent: 'center'}}
-                variant="contained"
-                color="primary"
-                onClick={handleStart}
-                className={classes.button}
-              > Let's Get Started
-              </Button>
-            </Box>
-          )}
+          {router.asPath === '/' && <BeginButton handleStart={handleStart} classes={classes} />}
         </div>
       </div>
 

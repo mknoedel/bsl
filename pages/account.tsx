@@ -58,12 +58,4 @@ export async function getStaticProps() {
   }
 }
 
-// Account.getInitialProps = async function() {
-//   const getEnvironment = firebase.functions().httpsCallable("getEnvironment");
-//   const result = await getEnvironment({});
-//   return {
-//     environment: result.data.environment
-//   };
-// };
-
 export default Account;

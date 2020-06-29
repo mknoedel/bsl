@@ -11,6 +11,7 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import initFirebase from '../utils/auth/initFirebase'
 import { ITab } from '../interfaces';
+import { useUser } from '../utils/auth/userUser';
 
 const useStyles = makeStyles((theme) => ({
   graph: {
@@ -29,6 +30,7 @@ const ResultsPage = (props: {
   tabs: ITab[]
 }) => {
   const { tabs } = props
+  const { user } = useUser()
   const classes = useStyles();
 
   return (
@@ -40,7 +42,7 @@ const ResultsPage = (props: {
         <Hidden smDown>
          <Grid container >
             <img src='BSL circle logo.png' height="40px"/>
-            <Typography className={classes.title}>Results</Typography>
+  <Typography className={classes.title}>{user ? `${user.displayName}'s` : null} Results</Typography>
             <ResultsChart tabs={tabs}/>
           </Grid>
         </Hidden>
@@ -48,7 +50,7 @@ const ResultsPage = (props: {
           <Hidden mdUp>
             <Grid container>
               <img src='BSL circle logo.png' height="40px" style={{marginTop:"8px"}}/>
-              <Typography className={classes.title}>Results</Typography>
+              <Typography className={classes.title}>{user ? `${user.displayName}'s` : null} Results</Typography>
               <div className={classes.graph}>
                 <ResultsChartMobile tabs={tabs}/>
               </div>
