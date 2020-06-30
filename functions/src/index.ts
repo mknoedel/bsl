@@ -42,9 +42,11 @@ function triggerPoductionRebuild() {
         console.log('Rebuild response: ' + body);
       }
     }
-
     request(options, callback);
+  } else {
+    console.log("Only deploy production if in a production")
   }
+
 }
 
 /**
@@ -52,5 +54,5 @@ function triggerPoductionRebuild() {
  * Redeploys the production build.
  */
 export const triggerRedeploy = functions.firestore
-  .document('Tabs/{tabName}')
-  .onDelete(triggerPoductionRebuild)
+  .document('Builds/{id}')
+  .onCreate(triggerPoductionRebuild)

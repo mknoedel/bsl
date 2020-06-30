@@ -21,3 +21,8 @@ export type User = {
 export type UserData = {
   // arbitrary user data you are storing in your DB
 }
+
+export type Scores = {
+  name: string
+  rating: number
+}
