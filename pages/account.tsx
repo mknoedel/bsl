@@ -6,6 +6,7 @@ import Link from "next/link";
 import initFirebase from "../utils/auth/initFirebase";
 import Router from "next/router";
 import { useUser } from "../utils/auth/userUser";
+import Layout from "../components/Layout";
 
 const Account = (props: {
   environment: string
@@ -14,7 +15,7 @@ const Account = (props: {
   const { user, logout } = useUser()
 
   return (
-    <>
+    <Layout title="Account Management">
       {!user?.id ? (
         <></>
       ) : (
@@ -43,7 +44,7 @@ const Account = (props: {
           </p>
         </>
       )}
-    </>
+    </Layout>
   );
 };
 

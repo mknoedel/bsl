@@ -1,3 +1,5 @@
+// TODO: Get rid of this page, it is completely useless.
+
 import React from "react"
 import firebase from "firebase/app"
 import "firebase/firestore"
@@ -5,6 +7,7 @@ import Link from "next/link"
 import initFirebase from "../utils/auth/initFirebase"
 import usePagination from "firestore-pagination-hook" //TODO: Use useSWR instead of this hook
 import { useUser } from "../utils/auth/userUser"
+import Layout from "../components/Layout"
 
 initFirebase();
 
@@ -27,7 +30,7 @@ const Spaces = () => {
   )
   
   return (
-    <>
+    <Layout title={'Spaces'}>
       {!user?.id ? (
         <></>
       ) : (
@@ -45,7 +48,7 @@ const Spaces = () => {
           </div>
         </>
       )}
-    </>
+    </Layout>
   )
 }
 

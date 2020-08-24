@@ -26,3 +26,24 @@ export type Scores = {
   name: string
   rating: number
 }
+
+export type SnackSeverity =
+	| 'error'
+	| 'success'
+	| 'warning'
+    | 'info'
+
+export interface SnackMessage {
+    message: string
+    key?: number
+    type?: SnackSeverity
+}
+      
+export interface SnackState {
+    open: boolean;
+    snackPack: SnackMessage[];
+    messageInfo?: SnackMessage;
+}
+
+export type SnackType = 'push' | 'pop' | 'close' | 'set_message'
+export type SnackAction = {type: SnackType, payload?: any}

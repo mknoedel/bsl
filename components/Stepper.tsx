@@ -11,6 +11,8 @@ import _ from 'lodash';
 import { Hidden, Container, LinearProgress } from '@material-ui/core';
 import getTabLink from '../utils/getTabLink';
 import BeginButton from './BeginButton';
+import tabPath from '../utils/tabPath';
+import resultsPath from '../utils/resultsPath';
 
 interface IButtonProps {
     optional?: any,
@@ -55,83 +57,69 @@ const useStyles = makeStyles(theme => ({
 
 export default function HorizontalNonLinearAlternativeLabelStepper(props: Props) {
   const { tabs, loading = false, setLoading = _.noop } = props
-  const classes = useStyles();
+  const classes = useStyles()
   const router = useRouter()
   let initialStep = _.findIndex(tabs, tab => getTabLink(tab.name) === router.asPath)
 
+
+  // States
   const [activeStep, setActiveStep] = React.useState(initialStep);
   const [completed, setCompleted] = React.useState(new Array());
   const [skipped, setSkipped] = React.useState(new Array());
-
+  // Initialize with localStorage
   useEffect(() => {
-    let storedActiveStep = localStorage.getItem('activeStep') || ''
-    let storedCompleted = localStorage.getItem('completed') || ''
-    let storedSkipped = localStorage.getItem('skipped') || ''
-
-    if (!initialStep && storedActiveStep) setActiveStep(Number(storedActiveStep))
-    if (storedCompleted) setCompleted(JSON.parse(storedCompleted))
-    if (storedSkipped) setSkipped(JSON.parse(storedSkipped))
+    setCompleted(JSON.parse(localStorage.getItem('completed') || ''))
+    setSkipped(JSON.parse(localStorage.getItem('skipped') || ''))
   }, []) 
 
+
+
+
   useEffect(() => {
-    localStorage.setItem('activeStep', String(activeStep))
-    let newTab = tabs[activeStep]
-    if (getTabLink(newTab?.name) && (router.asPath !== getTabLink(newTab.name))) {
+    let tabName = getTabName(activeStep)
+    if (tabName && router.asPath !== getTabLink(tabName)) {
       setLoading(true)
-      const tabLink = getTabLink(newTab.name)
-      router.push(tabLink ? "/tabs/[id]" : "/", tabLink ? tabLink : undefined)
+      const tabLink = getTabLink(tabName)
+      router.push(tabName ? `${tabPath}/[id]` : "/", tabLink)
     }
   }, [activeStep])
-  useEffect(() => {
-    localStorage.setItem('completed', JSON.stringify(completed))
-  }, [completed])
-  useEffect(() => {
-    localStorage.setItem('skipped', JSON.stringify(skipped))
-  }, [skipped])
+  // Store changes in localStorage
+  useEffect(() => localStorage.setItem('completed', JSON.stringify(completed)), [completed])
+  useEffect(() => localStorage.setItem('skipped',   JSON.stringify(skipped)),   [skipped])
  
-  // Prefetch
+
+
+  // Prefetch likely next pages
   useEffect(() => {
-    // Next page
     if (isLastStep()) {
-      if (!allStepsBuyOneCompleted()) {
-        // It's the last step, but not all steps have been completed
-        // find the first step that includes been completed
-        router.prefetch("/tabs/[id]", getTabLink(steps.find((_step, i) => !completed.includes(i))) || undefined)
+      if (!isFinalStepToComplete()) {
+        // It's the last step, but not all steps aside from this one have been completed
+        // Get the first step that has not been completed
+        router.prefetch(`${tabPath}/[id]`, getTabLink(steps.find((_step, i) => !completed.includes(i) && i !== activeStep)))
       } else {
-        router.prefetch('/results')
+        // Get the results page
+        router.prefetch(resultsPath)
       }
     } else {
-      router.prefetch("/tabs/[id]", getTabLink(steps[activeStep + 1]) || undefined)
+      // Get the next page
+      router.prefetch(`${tabPath}/[id]`, getTabLink(steps[activeStep + 1]))
     }
-    // Previous page
     if (activeStep) {
-      router.prefetch("/tabs/[id]", getTabLink(tabs[activeStep - 1]?.name) || undefined)
+      // Get the previous page
+      router.prefetch(`${tabPath}/[id]`, getTabLink(steps[activeStep - 1]))
     }
   }, [router.asPath])
 
 
-  const steps = _.map(tabs, c => c.name);
 
+  const steps = _.map(tabs, c => c.name)
+
+  const getTabName = (step: number): string => {
+    return tabs[step]?.name
+  }
+  
   const totalSteps = () => {
     return steps.length;
-  };
-
-  const getStepName = (step: number): string => {
-    return tabs[step]?.name || 'unknown'
-  }
-
-  // const isStepOptional = (step: number) => {
-  //   return tabs[step]?.optional || true
-  // };
-
-  const handleSkip = () => {
-    // if (!isStepOptional(activeStep)) {
-    //   throw new Error("You can't skip a step that isn't optional.");
-    // }
-    setSkipped((prevSkipped: Array<unknown>) => {
-      return _.union(prevSkipped, [activeStep]);
-    });
-    handleNext()
   };
 
   const skippedSteps = () => {
@@ -146,68 +134,71 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
     return completedSteps() === totalSteps() - skippedSteps();
   };
 
-  const allStepsBuyOneCompleted = () => {
-    return completedSteps() === totalSteps() - skippedSteps() + 1
-  };
-
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
-  const goToResults = () => {
-    router.push('/results')
+  const isFinalStepToComplete = () => {
+    return completedSteps() === totalSteps() - skippedSteps() + (completed.includes(activeStep) ? 1 : 0)
   }
 
-  const handleNext = () => {
-      setLoading(true)
-      if (isLastStep()) {
-        if (!allStepsCompleted()) {
-          // It's the last step, but not all steps have been completed
-          // find the first step that includes been completed
-          setActiveStep(steps.findIndex((_step, i) => !completed.includes(i)))
-        } else {
-          goToResults()
-        }
-      } else {
-        setActiveStep(activeStep + 1)
-      }
-  };
+
+
+  const handleSkip = () => {
+    setSkipped((prevSkipped: number[]) => _.union(prevSkipped, [activeStep]))
+    handleNext()
+  }
 
   const handleStart = () => {
     setLoading(true)
     setActiveStep(0)
-  };
+  }
 
   const handleBack = () => {
     setLoading(true)
     setActiveStep((prevActiveStep: number) => prevActiveStep - 1);
-  };
+  }
 
   const handleStep = (step: number) => () => {
     setLoading(true)
     setActiveStep(step);
-  };
+  }
+
+  const handleNext = () => {
+    setLoading(true)
+    if (isLastStep()) {
+      if (!allStepsCompleted()) {
+        // It's the last step, but not all steps have been completed
+        // find the first step that has not been completed
+        setActiveStep(steps.findIndex((_step, i) => !completed.includes(i)))
+      } else {
+        router.push(resultsPath)
+      }
+    } else {
+      setActiveStep(activeStep + 1)
+    }
+  }
 
   const handleComplete = (toResults?: boolean) => {
     const newCompleted = _.union(completed, [activeStep]);
-    setSkipped((prevSkipped: Array<unknown>) => {
+    setSkipped((prevSkipped: number[]) => {
       return _.remove(prevSkipped, (e) => e !== activeStep);
     });
     setCompleted(newCompleted);
     if (toResults) {
-      goToResults()
+      router.push(resultsPath)
     } else {
       handleNext()
     }
-  };
-
-  const isStepSkipped = (step: number) => {
-    return skipped.includes(step);
-  };
-
-  function isStepComplete(step: number) {
-    return completed.includes(step);
   }
+
+
+
+  const isStepSkipped = (step: number) => skipped.includes(step)
+
+  const isStepComplete = (step: number) => completed.includes(step)
+  
+  const isLastStep = () => activeStep === totalSteps() - 1
+
+  const isHome = () => router.asPath === '/'
+
+
 
   return (
     <div className={classes.root}>
@@ -225,9 +216,6 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
               buttonProps.optional = <Typography variant="caption">Skipped</Typography>;
               stepProps.completed = false;
             }
-            // else if (isStepOptional(index)) {
-            //   buttonProps.optional = <Typography variant="caption">Optional</Typography>;
-            // }
             return (
               <Step key={label} {...stepProps}>
                   <StepButton
@@ -244,76 +232,81 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
        </Hidden>
 
       <div>
-        <div>
-
-          {props.children}
-
-          {activeStep !== -1 && !loading && (
-            <Container maxWidth="lg" className={classes.actionsContainer}>
-              <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                Back
-              </Button>
-              {
-                // isStepOptional(activeStep) && 
-                !completed.includes(activeStep) && (
-                  <Button
-                    onClick={handleSkip}
-                    className={classes.button}
-                  >
-                    Skip
-                  </Button>
-                )
-              }
-
-              {activeStep !== steps.length &&
-                (completed.includes(activeStep) ? (
-                  <>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleNext}
-                      className={classes.button}
-                    >
-                      Next
-                    </Button>
-                    <Typography variant="caption" className={classes.completed}>
-                      Step {activeStep + 1} already completed
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    {completedSteps() === totalSteps() - 1 ? (
-                      <Button variant="contained" color="primary" onClick={() => handleComplete(true)} className={classes.button}>
-                        {'Finish Everything'}
-                      </Button>
-                    ) : (
-                      <Button variant="contained" color="primary" onClick={() => handleComplete()} className={classes.button}>
-                        {`Complete ${getStepName(activeStep)}`}
-                      </Button>
-                    )}
-                  </>
-                ))
-              }
-              
-              <Button
-                style={{justifyContent: 'center'}}
-                color="primary"
-                onClick={goToResults}
-                className={classes.button}
-              > Results
-              </Button>
-            </Container>
-          )}
-
-          {router.asPath === '/' && !loading && <BeginButton handleStart={handleStart} classes={classes} />}
-        </div>
+        {props.children}
       </div>
 
-      {router.asPath !== '/' && (
+      {activeStep !== -1 && !loading && (
+        <Container maxWidth="lg" className={classes.actionsContainer}>
+
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            className={classes.button}>
+            Back
+          </Button>
+          
+          {!completed.includes(activeStep) && (
+            <Button
+              onClick={handleSkip}
+              className={classes.button}
+            >
+              Skip
+            </Button>
+          )}
+
+          {!isLastStep() &&
+            (completed.includes(activeStep) ? (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                  className={classes.button}
+                >
+                  Next
+                </Button>
+                <Typography variant="caption" className={classes.completed}>
+                  Step {activeStep + 1} already completed
+                </Typography>
+              </>
+            ) : (
+              <>
+                {completedSteps() === totalSteps() - 1 ? (
+                  <Button variant="contained" color="primary" onClick={() => handleComplete(true)} className={classes.button}>
+                    {'Finish Everything'}
+                  </Button>
+                ) : (
+                  <Button variant="contained" color="primary" onClick={() => handleComplete()} className={classes.button}>
+                    {`Complete ${getTabName(activeStep)}`}
+                  </Button>
+                )}
+              </>
+            ))
+          }
+          
+          <Button
+            style={{justifyContent: 'center'}}
+            color="primary"
+            onClick={() => router.push(resultsPath)}
+            className={classes.button}
+          > Results
+          </Button>
+        </Container>
+      )}
+
+      {isHome() && !loading && <BeginButton handleStart={handleStart} classes={classes} />}
+
+      {!isHome() && (
         <Hidden lgUp>
           <hr />
           <nav>
-            {_.map(tabs, (tab: ITab, idx: number) => <Button key={idx} onClick={handleStep(idx)}>{tab.name}</Button>)}
+            { _.map(tabs, (tab: ITab, idx: number) => {
+              <Button
+                key={idx}
+                onClick={handleStep(idx)}
+                >{tab.name}
+              </Button>
+            })}
           </nav>
           <hr />
         </Hidden>
