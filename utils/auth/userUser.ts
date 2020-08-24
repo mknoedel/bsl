@@ -28,6 +28,7 @@ const useUser = (): {
   const getFromCookie = async () => {
     const cookie = cookies.get('auth')
     if (!cookie) {
+      console.log('You are not logged in. Redirecting to the login page')
       Router.push('/')
       return
     }
