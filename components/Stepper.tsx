@@ -68,8 +68,9 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
   const [skipped, setSkipped] = React.useState(new Array());
   // Initialize with localStorage
   useEffect(() => {
-    setCompleted(JSON.parse(localStorage.getItem('completed') || ''))
-    setSkipped(JSON.parse(localStorage.getItem('skipped') || ''))
+    setCompleted(JSON.parse(localStorage.getItem('completed') || '[]'))
+    setSkipped(JSON.parse(localStorage.getItem('skipped') || '[]'))
+    return
   }, []) 
 
 
@@ -104,7 +105,7 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
       // Get the next page
       router.prefetch(`${tabPath}/[id]`, getTabLink(steps[activeStep + 1]))
     }
-    if (activeStep) {
+    if (activeStep > 0) {
       // Get the previous page
       router.prefetch(`${tabPath}/[id]`, getTabLink(steps[activeStep - 1]))
     }
@@ -312,5 +313,5 @@ export default function HorizontalNonLinearAlternativeLabelStepper(props: Props)
         </Hidden>
       )}
     </div>
-  );
+  )
 }
