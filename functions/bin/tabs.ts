@@ -70,4 +70,4 @@ const tabsV2 = [
   {"name": "Intellectual: Mental Success",   "questions": intellect1CForm},
 ]
 
-export default tabsV2
+export default tabsV2 || tabsV1
