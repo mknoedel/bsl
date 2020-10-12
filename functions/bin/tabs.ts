@@ -1,25 +1,38 @@
-import emotionForm from './tabs/emotion'
-import trustForm from './tabs/trust'
-import timeManagementForm from './tabs/time-management'
-import successForm from './tabs/success'
-import socialForm from './tabs/social'
-import selfForm from './tabs/self'
-import schoolForm from './tabs/school'
-import nutritionForm from './tabs/nutrition'
-import moodForm from './tabs/mood'
-import mentalForm from './tabs/mental'
-import loveForm from './tabs/love'
-import lifestyleForm from './tabs/lifestyle'
-import honestyForm from './tabs/honesty'
-import funForm from './tabs/fun'
-import friendsForm from './tabs/friends'
-import fitnessForm from './tabs/fitness'
-import fearForm from './tabs/fear'
-import familyForm from './tabs/family'
-import responsibilityForm from './tabs/responsibility'
-import workJobForm from './tabs/work-job'
+import emotionForm from './tabsV1/emotion'
+import trustForm from './tabsV1/trust'
+import timeManagementForm from './tabsV1/time-management'
+import successForm from './tabsV1/success'
+import socialForm from './tabsV1/social'
+import selfForm from './tabsV1/self'
+import schoolForm from './tabsV1/school'
+import nutritionForm from './tabsV1/nutrition'
+import moodForm from './tabsV1/mood'
+import mentalForm from './tabsV1/mental'
+import loveForm from './tabsV1/love'
+import lifestyleForm from './tabsV1/lifestyle'
+import honestyForm from './tabsV1/honesty'
+import funForm from './tabsV1/fun'
+import friendsForm from './tabsV1/friends'
+import fitnessForm from './tabsV1/fitness'
+import fearForm from './tabsV1/fear'
+import familyForm from './tabsV1/family'
+import responsibilityForm from './tabsV1/responsibility'
+import workJobForm from './tabsV1/work-job'
 
-const tabs: any[] = [
+import emotion1AForm from './tabsV2/emotion1A'
+import emotion1BForm from './tabsV2/emotion1B'
+import emotion1CForm from './tabsV2/emotion1C'
+import physical1AForm from './tabsV2/physical1A'
+import physical1BForm from './tabsV2/physical1B'
+import physical1CForm from './tabsV2/physical1C'
+import social1AForm from './tabsV2/social1A'
+import social1BForm from './tabsV2/social1B'
+import social1CForm from './tabsV2/social1C'
+import intellect1AForm from './tabsV2/intellect1A'
+import intellect1BForm from './tabsV2/intellect1B'
+import intellect1CForm from './tabsV2/intellect1C'
+
+const tabsV1: any[] = [
   {"name": "Emotion",         "questions": emotionForm},
   {"name": "Family",          "questions": familyForm},
   {"name": "Fear",            "questions": fearForm},
@@ -42,4 +55,19 @@ const tabs: any[] = [
   {"name": "Work Job",        "questions": workJobForm},
 ]
 
-export default tabs
+const tabsV2 = [
+  {"name": "Emotional: Basic Understanding", "questions": emotion1AForm},
+  {"name": "Emotional: Mood",                "questions": emotion1BForm},
+  {"name": "Emotional: Love and Self",       "questions": emotion1CForm},
+  {"name": "Physical: General",              "questions": physical1AForm},
+  {"name": "Physical: Injuries",             "questions": physical1BForm},
+  {"name": "Physical: Nutrition",            "questions": physical1CForm},
+  {"name": "Social: General",                "questions": social1AForm},
+  {"name": "Social: Family & Friends",       "questions": social1BForm},
+  {"name": "Social: Lifestyle and Fun",      "questions": social1CForm},
+  {"name": "Intellectual: General",          "questions": intellect1AForm},
+  {"name": "Intellectual: Enjoyment",        "questions": intellect1BForm},
+  {"name": "Intellectual: Mental Success",   "questions": intellect1CForm},
+]
+
+export default tabsV2 || tabsV1
